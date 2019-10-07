@@ -23,7 +23,7 @@ services:
       - "traefik.port=8080"
   database:
     image: 'mongo'
-    container_name: "staging-farmlab-db"
+    container_name: "farmlab-db"
     restart: unless-stopped
     networks: 
       - internal
