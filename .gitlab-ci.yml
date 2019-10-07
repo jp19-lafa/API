@@ -1,0 +1,77 @@
+image: node:latest
+
+services:
+- name: mongo:latest
+  alias: database
+
+stages:
+  - test
+  # - build
+  - deploy_staging
+  - deploy_production
+
+cache:
+  paths:
+    - node_modules/
+
+test:
+  stage: test
+  script:
+    - echo "Running tests"
+    - npm install
+    - npm test
+  tags:
+    - node
+
+# build:
+#   stage: build
+#   script: 
+#     - echo "Building the app"
+#     - npm build
+
+deploy_staging:
+  stage: deploy_staging
+  before_script:
+    - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )"
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - echo "Deploy to staging server"
+    - mv node_modules ../node_modules
+    - scp -r * farmlab@$SSH_HOST:/home/farmlab/containers/farmlab_staging
+    - mv ../node_modules node_modules
+    - ssh farmlab@$SSH_HOST 'cd /home/farmlab/containers/farmlab_staging && docker-compose -f "docker-compose.staging.yml" up -d --build'
+  tags:
+    - node
+  environment:
+    name: staging
+    url: https://api.staging.farmlab.team
+  except:
+    - master
+
+deploy_production:
+  stage: deploy_production
+  before_script:
+    - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )"
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - echo "Deploy to production server"
+    - rm -rf node_modules
+    - scp -r * farmlab@$SSH_HOST:/home/farmlab/containers/farmlab_production
+    - ssh farmlab@$SSH_HOST 'cd /home/farmlab/containers/farmlab_production && docker-compose -f "docker-compose.production.yml" up -d --build'
+  tags:
+    - node
+  environment:
+    name: production
+    url: https://api.farmlab.team
+  only:
+    - master

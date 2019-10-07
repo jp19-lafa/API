@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  api:
+    build: .
+    ports:
+      - 8080:8080
+      - 1887:1887
+  database:
+    image: mongo:latest
+    ports:
+      - 27017:27017

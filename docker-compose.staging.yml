@@ -1,0 +1,41 @@
+version: '3.7'
+
+volumes:
+  staging-farmlab-db-data:
+  staging-farmlab-db-conf:
+
+services:
+  api:
+    build: .
+    container_name: "staging-farmlab-api"
+    restart: unless-stopped
+    networks:
+      - traefik_proxy
+      - internal
+    ports:
+      - 1886:1887
+    depends_on:
+      - database
+    labels:
+      - "traefik.backend=StagingFarmLabAPI"
+      - "traefik.frontend.rule=Host:api.staging.farmlab.team"
+      - "traefik.docker.network=management_proxy-bridge"
+      - "traefik.port=8080"
+  database:
+    image: 'mongo'
+    container_name: "staging-farmlab-db"
+    restart: unless-stopped
+    networks: 
+      - internal
+    volumes:
+      - staging-farmlab-db-data:/data/db
+      - staging-farmlab-db-conf:/data/configdb
+    labels:
+      - "traefik.backend=StagingFarmLabDatabase"
+      - "traefik.enable=false"
+
+networks:
+  internal:
+  traefik_proxy:
+    external:
+      name: management_proxy-bridge

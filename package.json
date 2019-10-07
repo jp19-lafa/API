@@ -1,0 +1,30 @@
+{
+  "name": "farmlab-mqtt-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "mocha --exit",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jp19-lafa/MQTT-API.git"
+  },
+  "author": "Matthias Willemsen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jp19-lafa/MQTT-API/issues"
+  },
+  "homepage": "https://github.com/jp19-lafa/MQTT-API#readme",
+  "dependencies": {
+    "express": "",
+    "http-errors": "",
+    "mosca": "",
+    "winston": ""
+  },
+  "devDependencies": {
+    "mocha": "",
+    "supertest": ""
+  }
+}
