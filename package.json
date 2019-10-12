@@ -27,7 +27,8 @@
     "cors": "",
     "express-jwt": "",
     "jsonwebtoken": "",
-    "bcrypt": ""
+    "bcrypt": "",
+    "uuid": ""
   },
   "devDependencies": {
     "mocha": "",
