@@ -62,10 +62,9 @@ module.exports = (services) => {
 
   });
 
-  router.post('/register', [
-
-  ], async (req, res) => {
-
+  router.post('/register',
+  async (req, res) => {
+    res.status(418).send('Not Implemented')
   });
 
   return router;
