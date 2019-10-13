@@ -28,7 +28,7 @@ const { userSchema } = require('./models/user.model');
 const user = database.model('User', userSchema);
 
 const { nodeSchema } = require('./models/node.model');
-const node = database.model('Node', userSchema);
+const node = database.model('Node', nodeSchema);
 
 
 // Mongoose Connection
@@ -62,11 +62,26 @@ let services = {
   mqtt: server,
   logger: logger,
   models: {
-    user: user
+    user: user,
+    node: node
   },
   keys: {
     private: fs.readFileSync('keys/private.key'),
     public: fs.readFileSync('keys/public.key')
+  },
+  types: {
+    actuators: [
+      'lightint',
+      'flowpump',
+      'foodpump'
+    ],
+    sensors: [
+      'airtemp',
+      'watertemp',
+      'lightstr',
+      'airhumidity',
+      'waterph',
+    ]
   }
 }
 

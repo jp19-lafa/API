@@ -21,7 +21,7 @@ module.exports = (services) => {
         detail: errors.array()
       });
 
-    const user = await authController.authenticateUserbyCredentials(req.body.email, req.body.password).catch(error => services.logger.error(error));
+    const user = await authController.authenticateUserByCredentials(req.body.email, req.body.password).catch(error => services.logger.error(error));
 
     if (!user) return res.status(403).send({
       error: 'Forbidden',
