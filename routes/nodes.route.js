@@ -40,9 +40,9 @@ module.exports = (services) => {
         detail: errors.array()
       });
 
-    services.models.node.findById(req.params.id).exec((error, node) => {
+    services.models.node.findOne({ _id: req.params.id, members: req.user.sub }).exec((error, node) => {
       if (error || !node)
-        return;
+        return res.sendStatus(403);
 
       const packet = {
         topic: `${node.macAddress}/actuators/${req.body.actuator}`,
@@ -51,7 +51,7 @@ module.exports = (services) => {
         retain: false
       }
 
-      services.logger.info('Published: ',  packet);
+      services.logger.info(`Published: [ACTUATOR] ${req.body.state} for ${req.body.actuator} to ${node.macAddress}`);
       services.mqtt.publish(packet);
       res.sendStatus(200);
     });

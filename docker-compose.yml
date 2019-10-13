@@ -10,3 +10,7 @@ services:
     image: mongo:latest
     ports:
       - 27017:27017
+  nodered:
+    image: nodered/node-red
+    ports:
+      - 1880:1880
