@@ -70,7 +70,7 @@ let services = {
   }
 }
 
-const mqttController = new MqttController(services);
+let mqttController = new MqttController(services);
 
 app.use(jwt({ secret: services.keys.private }).unless({path: ['/auth/login', '/auth/refresh']}));
 

@@ -5,7 +5,7 @@ module.exports = {
     label: String,
     macAddress: { type: String, required: true },
     authorizationKey: { type: String, required: true },
-    status: { type: String, default: 0, required: true },
+    status: { type: Boolean, default: false, required: true },
     liveSince: { type: Date, default: Date.now },
     allowPublicStats: { type: Boolean, default: false },
     members: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],

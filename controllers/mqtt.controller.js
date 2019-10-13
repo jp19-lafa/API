@@ -4,33 +4,75 @@ module.exports = {
 
   MqttController: class {
 
-    constructor(service) {
-      this.service = service;
+    constructor(services) {
+      this.services = services;
 
-      this.service.mqtt.authenticate = (client, username, password, callback) => {
-        this.service.models.node.findOne({ macAddress: username, authorizationKey: password }).exec((error, node) => {
+      this.services.mqtt.authenticate = (client, username, password, callback) => {
+        if (!client.id.match(/^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$/))
+          callback(null, false);
+        this.services.models.node.findOne({ macAddress: username, authorizationKey: password }).exec((error, node) => {
           if(!node || error)
             callback(null, false);
-          else
+          else {
+            this.services.logger.info(`Client ${client.id} authorized.`);
             callback(null, true);
+          }
         });
       }
 
-      this.service.mqtt.on('ready', () => {
-        this.service.logger.info('MQTT Server Running');
+      this.services.mqtt.on('ready', () => {
+        this.services.logger.info('MQTT Server Running');
       });
 
-      this.service.mqtt.on('clientDisconnected', function (client) {
-        // TODO: Set node to offline
+      this.services.mqtt.on('clientDisconnected', function (client) {
+        this.services.logger.info(`Client ${client.id} disconnected.`);
+        this.services.models.node.findOne({ macAddress: client.id }).exec((error, node) => {
+          if(!node || error)
+            return;
+          
+          node.status = false
+          node.save();
+        });
       });
 
-      this.service.mqtt.on('published', (packet, client) => {
-        this.messageHandler(packet, client);
+      this.services.mqtt.on('clientConnected', function (client) {
+        this.services.logger.info(`Client ${client.id} connected.`);
+        this.services.models.node.findOne({ macAddress: client.id }).exec((error, node) => {
+          if(!node || error)
+            return;
+          
+          node.status = true
+          node.save();
+        });
+      });
+
+      this.services.mqtt.on('published', (packet, client) => {
+        if(!packet.topic.split('/')[0].match(/^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$/))
+          this.handleNodeMessage(packet, client);
       });
     }
 
-    messageHandler(packet, client) {
-      // TODO: Talk to Tom about formatting & topics
+    // Handle all node related messages 
+    handleNodeMessage(packet, client) {
+
+      switch (packet.topic.split('/')[1]) {
+        case 'sensors':
+            this.handleSensorMessage(packet, client);
+          break;
+        case 'actuators':
+            this.handleActuatorMessage(packet, client);
+          break;
+      }
+    }
+
+    // Handle all node sensor related messages 
+    handleSensorMessage(packet, client) {
+
+    }
+
+    // Handle all node actuator related messages 
+    handleActuatorMessage(packet, client) {
+      
     }
   }
 
