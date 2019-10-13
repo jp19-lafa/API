@@ -53,7 +53,7 @@ module.exports = {
 
     async generateTokenSet(user) {
       return new Promise((resolve, reject) => {
-        const refreshToken = uuidv4()
+        const refreshToken = uuidv4();
         this.services.models.user.findByIdAndUpdate(user._id, { refreshToken: refreshToken }, { new: true }).exec((error, user) => {
           if(error)
             reject(error);
