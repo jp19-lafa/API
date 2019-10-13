@@ -50,7 +50,8 @@ const corsOptionsDelegate = (req, callback) => {
     corsOptions = { origin: false }
   }
   callback(null, corsOptions);
-}
+};
+
 app.use(cors(corsOptionsDelegate));
 
 // JSON Body parsing
@@ -83,7 +84,7 @@ let services = {
       'waterph',
     ]
   }
-}
+};
 
 let mqttController = new MqttController(services);
 
