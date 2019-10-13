@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 module.exports = {
   nodeSchema: new mongoose.Schema({
@@ -8,9 +8,9 @@ module.exports = {
     status: { type: Boolean, default: false, required: true },
     liveSince: { type: Date, default: Date.now },
     allowPublicStats: { type: Boolean, default: false },
-    members: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
-    sensors: [{ type: mongoose.Schema.ObjectId, ref: 'Sensor' }],
-    actuators: [{ type: mongoose.Schema.ObjectId, ref: 'Actuator' }],
-    actions: [{ type: mongoose.Schema.ObjectId, ref: 'Actions' }]
+    members: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
+    sensors: [{ type: mongoose.Schema.ObjectId, ref: "Sensor" }],
+    actuators: [{ type: mongoose.Schema.ObjectId, ref: "Actuator" }],
+    actions: [{ type: mongoose.Schema.ObjectId, ref: "Actions" }]
   })
-}
+};
