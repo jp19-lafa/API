@@ -8,10 +8,7 @@ module.exports = {
     password: { type: String, required: true },
     enabled: { type: Boolean, default: true },
     refreshToken: String,
-    passwordReset: {
-      token: { type: String },
-      expires: { type: Date }
-    },
+    passwordReset: { token: { type: String }, expires: { type: Date } },
     joined: { type: Date, default: Date.now }
   })
 };
