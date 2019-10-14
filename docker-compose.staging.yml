@@ -33,6 +33,20 @@ services:
     labels:
       - "traefik.backend=StagingFarmLabDatabase"
       - "traefik.enable=false"
+  mongo-express:
+    image: mongo-express
+    restart: unless-stopped
+    environment:
+      - ME_CONFIG_MONGODB_SERVER="database"
+      - ME_CONFIG_BASICAUTH_USERNAME="matthias"
+      - ME_CONFIG_BASICAUTH_PASSWORD="TestAdmin"
+    depends_on:
+      - database
+    labels:
+      - "traefik.backend=StagingFarmLabMongoExpress"
+      - "traefik.frontend.rule=Host:me.staging.farmlab.team"
+      - "traefik.docker.network=management_proxy-bridge"
+      - "traefik.port=8080"
 
 networks:
   internal:
