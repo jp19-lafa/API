@@ -50,6 +50,7 @@ deploy_staging:
     - mv node_modules ../node_modules
     - scp -r * farmlab@$SSH_HOST:/home/farmlab/containers/farmlab_staging
     - mv ../node_modules node_modules
+    - ssh farmlab@$SSH_HOST 'cd /home/farmlab/containers/farmlab_staging && mkdir keys && cd keys && ssh-keygen -t rsa -b 4096 -m PEM -f private.key -q -N "" && openssl rsa -in private.key -pubout -outform PEM -out public.key'
     - ssh farmlab@$SSH_HOST 'cd /home/farmlab/containers/farmlab_staging && docker-compose -f "docker-compose.staging.yml" up -d --build'
   tags:
     - node
