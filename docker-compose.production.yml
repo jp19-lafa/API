@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 
 volumes:
   farmlab-db-data:
@@ -22,10 +22,10 @@ services:
       - "traefik.docker.network=management_proxy-bridge"
       - "traefik.port=8080"
   database:
-    image: 'mongo'
-    container_name: "staging-farmlab-db"
+    image: "mongo"
+    container_name: "farmlab-db"
     restart: unless-stopped
-    networks: 
+    networks:
       - internal
     volumes:
       - farmlab-db-data:/data/db

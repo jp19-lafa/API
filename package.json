@@ -19,9 +19,16 @@
   "homepage": "https://github.com/jp19-lafa/MQTT-API#readme",
   "dependencies": {
     "express": "",
+    "express-validator": "",
     "http-errors": "",
     "mosca": "",
-    "winston": ""
+    "winston": "",
+    "mongoose": "",
+    "cors": "",
+    "express-jwt": "",
+    "jsonwebtoken": "",
+    "bcrypt": "",
+    "uuid": ""
   },
   "devDependencies": {
     "mocha": "",

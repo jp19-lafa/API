@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 
 services:
   api:
@@ -8,5 +8,26 @@ services:
       - 1887:1887
   database:
     image: mongo:latest
+    networks:
+      db:
+        aliases:
+          - database
     ports:
       - 27017:27017
+  nodered:
+    image: nodered/node-red
+    ports:
+      - 1880:1880
+  mongo-express:
+    image: mongo-express
+    restart: unless-stopped
+    networks:
+      - db
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=database
+      - ME_CONFIG_BASICAUTH_USERNAME="matthias"
+      - ME_CONFIG_BASICAUTH_PASSWORD="TestAdmin"
+    ports:
+      - 8081:8081
+
+networks: db:
