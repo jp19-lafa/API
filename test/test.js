@@ -1,10 +1,10 @@
-const request = require('supertest');
-const app = require('../app');
+const request = require("supertest");
+const app = require("../app");
 
-describe('App', function() {
-  it('Sends 401 on /', function(done) {
+describe("App", function() {
+  it("Sends 401 on /", function(done) {
     request(app)
-      .get('/')
+      .get("/")
       .expect(401, done);
   });
-}); 
+});

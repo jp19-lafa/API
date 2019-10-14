@@ -2,22 +2,20 @@ const router = require("express").Router({ mergeParams: true });
 const { body, param, validationResult } = require("express-validator");
 
 module.exports = services => {
-  router.get('/testnode',
-    async (req, res) => {
-      services.logger.info('GET /nodes');
+  router.get("/testnode", async (req, res) => {
+    services.logger.info("GET /nodes");
 
-      let nodeM = new services.models.node({
-        label: 'Development Node Alfa',
-        macAddress: 'AA:AA:AA:AA:AA:AA',
-        authorizationKey: '76989157-fe00-4d36-87f0-745f8ab73c2d',
-        allowPublicStats: true
-      })
+    let nodeM = new services.models.node({
+      label: "Development Node Alfa",
+      macAddress: "AA:AA:AA:AA:AA:AA",
+      authorizationKey: "76989157-fe00-4d36-87f0-745f8ab73c2d",
+      allowPublicStats: true
+    });
 
-      nodeM.save().then(node => {
-        res.send({ amount: 0, result: node });
-      })
-    }
-  );
+    nodeM.save().then(node => {
+      res.send({ amount: 0, result: node });
+    });
+  });
 
   router.get(
     "/:id",
