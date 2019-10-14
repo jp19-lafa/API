@@ -14,6 +14,12 @@ cache:
   paths:
     - node_modules/
 
+before_script:
+  - "mkdir keys && cd keys"
+  - "ssh-keygen -t rsa -b 4096 -m PEM -f private.key -q -N ''"
+  - "openssl rsa -in private.key -pubout -outform PEM -out public.key"
+  - "cd .."
+
 test:
   stage: test
   script:
