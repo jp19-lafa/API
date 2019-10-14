@@ -8,7 +8,7 @@ module.exports = services => {
 
       let nodeM = new services.models.node({
         label: 'Development Node Alfa',
-        macAddress: 'QWQWQWQW',
+        macAddress: 'AA:AA:AA:AA:AA:AA',
         authorizationKey: '76989157-fe00-4d36-87f0-745f8ab73c2d',
         allowPublicStats: true
       })
