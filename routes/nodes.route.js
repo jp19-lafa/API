@@ -93,7 +93,7 @@ module.exports = services => {
           services.logger.info(
             `Published: [ACTUATOR] ${req.body.state} for ${req.body.actuator} to ${node.macAddress}`
           );
-          
+
           services.mqtt.publish(packet);
           res.sendStatus(200);
         });

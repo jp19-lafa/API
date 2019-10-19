@@ -32,7 +32,8 @@ module.exports = {
         this.services.models.user
           .findOne({ email: email })
           .then(user => {
-            if (user && bcrypt.compareSync(password, user.password)) resolve(user);
+            if (user && bcrypt.compareSync(password, user.password))
+              resolve(user);
             resolve(null);
           })
           .catch(error => {
