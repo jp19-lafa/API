@@ -2,19 +2,16 @@ const router = require("express").Router({ mergeParams: true });
 const { body, param, validationResult } = require("express-validator");
 
 module.exports = services => {
-  router.get("/testnode", async (req, res) => {
-    services.logger.info("GET /nodes");
 
-    let nodeM = new services.models.node({
-      label: "Development Node Alfa",
-      macAddress: "AA:AA:AA:AA:AA:AA",
-      authorizationKey: "76989157-fe00-4d36-87f0-745f8ab73c2d",
-      allowPublicStats: true
-    });
-
-    nodeM.save().then(node => {
-      res.send({ amount: 0, result: node });
-    });
+  router.get('/', async (req, res) => {
+    services.models.node
+      .find({})
+      .select("-__v -authorizationKey")
+      .populate({ path: "members", select: "_id firstname lastname" })
+      .exec((error, nodes) => {
+        if (error) return res.sendStatus(403);
+        res.send(nodes);
+      });
   });
 
   router.get(
@@ -99,6 +96,21 @@ module.exports = services => {
         });
     }
   );
+
+  router.get("/createtestnode", async (req, res) => {
+    services.logger.info("GET /createtestnode");
+
+    let nodeM = new services.models.node({
+      label: "Development Node Alfa",
+      macAddress: "AA:AA:AA:AA:AA:AA",
+      authorizationKey: "76989157-fe00-4d36-87f0-745f8ab73c2d",
+      allowPublicStats: true
+    });
+
+    nodeM.save().then(node => {
+      res.send({ amount: 0, result: node });
+    });
+  });
 
   return router;
 };
