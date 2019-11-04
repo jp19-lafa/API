@@ -3,6 +3,13 @@ const { body, param, validationResult } = require("express-validator");
 
 module.exports = services => {
 
+  /**
+   * Get all nodes of the logged in user
+   * 
+   * @requires Authorization
+   * 
+   * @returns {Node.Global[]}
+   */
   router.get('/', async (req, res) => {
     services.models.node
       .find({ members: req.user.sub })
@@ -14,6 +21,11 @@ module.exports = services => {
       });
   });
 
+  /**
+   * Get all public nodes
+   * 
+   * @returns {Node.Global[]}
+   */
   router.get('/public', async (req, res) => {
     services.models.node
       .find({ allowPublicStats: true })
@@ -24,36 +36,50 @@ module.exports = services => {
       });
   });
 
-  router.get(
-    "/:id",
-    [
-      param("id")
-        .isMongoId()
-        .trim()
-        .escape()
-    ],
-    async (req, res) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty())
-        return res.status(422).json({
-          error: "Unprocessable Entity",
-          code: 422,
-          reason: "Invalid fields",
-          detail: errors.array()
-        });
+  /**
+   * Get a specific node's data
+   * 
+   * @requires Authorization
+   * 
+   * @returns {Node.Specific}
+   */
+  router.get("/:id", [
+    param("id")
+      .isMongoId()
+      .trim()
+      .escape(),
+    query("limit").optional().isNumeric().trim().escape()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.sendStatus(422);
 
-      services.models.node
-        .findOne({ _id: req.params.id, members: req.user.sub })
-        .select("-__v -authorizationKey")
-        .populate({ path: "members", select: "_id firstname lastname" })
-        .exec((error, node) => {
-          if (error || !node) return res.sendStatus(403);
+    if(!req.query.limit) req.query.limit = 1;
 
-          res.send(node);
-        });
-    }
-  );
+    services.database.models.node
+      .findOne({ _id: req.params.id, members: req.user.sub })
+      .select("-__v -authorizationKey")
+      .populate({ path: "members", select: "_id firstname lastname" })
+      .populate({ path: "sensors.airtemp", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
+      .populate({ path: "sensors.watertemp", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
+      .populate({ path: "sensors.lightstr", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
+      .populate({ path: "sensors.airhumidity", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
+      .populate({ path: "sensors.waterph", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
+      .exec((error, node) => {
+        if (error || !node) return res.sendStatus(403);
 
+        res.send(node);
+      });
+  });
+
+  /**
+   * Set a node's actuator to a secific value
+   * 
+   * @requires Authorization
+   * 
+   * @returns {HTTPStatus}
+   */
   router.put(
     "/:id/actuator",
     [
