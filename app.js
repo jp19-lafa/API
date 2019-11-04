@@ -85,7 +85,11 @@ let mqttController = new MqttController(services);
 
 app.use(
   jwt({ secret: services.keys.private }).unless({
-    path: ["/auth/login", "/auth/refresh"]
+    path: [
+      "/auth/login",
+      "/auth/refresh",
+      "/nodes/public",
+    ]
   })
 );
 
