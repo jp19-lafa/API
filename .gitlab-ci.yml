@@ -1,84 +1,58 @@
 image: node:latest
 
 services:
-- name: mongo:latest
-  alias: database
+  - name: mongo:latest
+    alias: database
 
 stages:
-  - test
-  # - build
-  - deploy_staging
-  - deploy_production
+  - Test
+  - Build
 
-cache:
-  paths:
-    - node_modules/
-
-before_script:
-  - "mkdir keys && cd keys"
-  - "ssh-keygen -t rsa -b 4096 -m PEM -f private.key -q -N ''"
-  - "openssl rsa -in private.key -pubout -outform PEM -out public.key"
-  - "cd .."
-
-test:
-  stage: test
-  script:
-    - echo "Running tests"
-    - npm install
-    - npm test
-  tags:
-    - node
-
-# build:
-#   stage: build
-#   script: 
-#     - echo "Building the app"
-#     - npm build
-
-deploy_staging:
-  stage: deploy_staging
+Test:
+  stage: Test
+  image: node:latest
   before_script:
-    - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )"
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
+    - "npm config set loglevel warn"
+    - "cd keys"
+    - "ssh-keygen -t rsa -b 4096 -m PEM -f private.key -q -N ''"
+    - "openssl rsa -in private.key -pubout -outform PEM -out public.key"
+    - "cd .."
+    - "npm install"
   script:
-    - echo "Deploy to staging server"
-    - mv node_modules ../node_modules
-    - scp -r * farmlab@$SSH_HOST:/home/farmlab/containers/farmlab_staging
-    - mv ../node_modules node_modules
-    - ssh farmlab@$SSH_HOST 'cd /home/farmlab/containers/farmlab_staging && rm keys/* && cd keys && ssh-keygen -t rsa -b 4096 -m PEM -f private.key -q -N "" && openssl rsa -in private.key -pubout -outform PEM -out public.key'
-    - ssh farmlab@$SSH_HOST 'cd /home/farmlab/containers/farmlab_staging && docker-compose -f "docker-compose.staging.yml" up -d --build'
-  tags:
-    - node
-  environment:
-    name: staging
-    url: https://api.staging.farmlab.team
+    - npm run test
+  cache:
+    paths:
+      - node_modules/
+
+Staging Build:
+  stage: Build
+  image: docker:stable
+  services:
+    - docker:18-dind
+  before_script:
+    - "docker login registry.mira.systems -u ${DOCKER_USER} -p ${DOCKER_PASS}"
+  script:
+    - "docker build -t registry.mira.systems/farmlab/mqtt-api:staging-latest -t registry.mira.systems/farmlab/mqtt-api:dev-${CI_COMMIT_SHORT_SHA} ."
+    - "docker push registry.mira.systems/farmlab/mqtt-api:staging-latest"
+    - "docker push registry.mira.systems/farmlab/mqtt-api:dev-${CI_COMMIT_SHORT_SHA}"
+  after_script:
+    - docker logout registry.mira.systems
+  when: manual
   except:
     - master
 
-deploy_production:
-  stage: deploy_production
+Production Build:
+  stage: Build
+  image: docker:stable
+  services:
+    - docker:18-dind
   before_script:
-    - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )"
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
+    - "docker login registry.mira.systems -u ${DOCKER_USER} -p ${DOCKER_PASS}"
   script:
-    - echo "Deploy to production server"
-    - rm -rf node_modules
-    - scp -r * farmlab@$SSH_HOST:/home/farmlab/containers/farmlab_production
-    - ssh farmlab@$SSH_HOST 'cd /home/farmlab/containers/farmlab_production && docker-compose -f "docker-compose.production.yml" up -d --build'
-  tags:
-    - node
-  environment:
-    name: production
-    url: https://api.farmlab.team
+    - "docker build -t registry.mira.systems/farmlab/mqtt-api:latest ."
+    - "docker push registry.mira.systems/farmlab/mqtt-api:latest"
+  after_script:
+    - docker logout registry.mira.systems
+  when: manual
   only:
     - master
