@@ -1,33 +1,24 @@
 version: "3.7"
 
+volumes:
+  farmlab-db-data:
+  farmlab-db-conf:
+
 services:
   api:
-    build: .
-    ports:
-      - 8080:8080
-      - 1887:1887
-  database:
-    image: mongo:latest
-    networks:
-      db:
-        aliases:
-          - database
-    ports:
-      - 27017:27017
-  nodered:
-    image: nodered/node-red
-    ports:
-      - 1880:1880
-  mongo-express:
-    image: mongo-express
+    image: registry.mira.systems/farmlab/mqtt-api:latest
+    container_name: "farmlab-api"
     restart: unless-stopped
-    networks:
-      - db
-    environment:
-      - ME_CONFIG_MONGODB_SERVER=database
-      - ME_CONFIG_BASICAUTH_USERNAME="matthias"
-      - ME_CONFIG_BASICAUTH_PASSWORD="TestAdmin"
     ports:
-      - 8081:8081
+      - 1887:1887
+      - 8080:8080
+    depends_on:
+      - database
 
-networks: db:
+  database:
+    image: mongo
+    container_name: "farmlab-db"
+    restart: unless-stopped
+    volumes:
+      - farmlab-db-data:/data/db
+      - farmlab-db-conf:/data/configdb
