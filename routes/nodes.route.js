@@ -16,7 +16,7 @@ module.exports = services => {
   router.get('/', async (req, res) => {
     Node
       .find({ members: req.user.sub })
-      .select("-__v -authorizationKey")
+      .select("-__v -authorizationKey -sensors.airtemp.history -sensors.watertemp.history -sensors.lightstr.history -sensors.airhumidity.history -sensors.waterph.history")
       .populate({ path: "members", select: "_id firstname lastname" })
       .exec((error, nodes) => {
         if (error) return res.sendStatus(403);
@@ -58,7 +58,7 @@ module.exports = services => {
     if (!errors.isEmpty())
       return res.sendStatus(422);
 
-    if(!req.query.limit) req.query.limit = 1;
+    if(!req.query.limit) req.query.limit = 3;
 
     Node
       .findOne({ _id: req.params.id, members: req.user.sub })
