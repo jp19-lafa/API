@@ -14,8 +14,6 @@ module.exports = {
 
       this.services.http = app;
 
-      this.app = app;
-
       // sentry.init({ dsn: 'https://2d76762c67434792892887d13b2cdda6@sentry.io/1784742' });
 
       this._init();

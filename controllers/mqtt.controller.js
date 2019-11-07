@@ -81,17 +81,17 @@ module.exports = {
       );
 
       const sensorDataPoint = new DataPoint({
-        value: parseInt(packet.payload.toString())
+        value: parseFloat(packet.payload.toString())
       });
 
       sensorDataPoint.save();
-
       Node.findOneAndUpdate(
         { macAddress: client.id },
         {
-          // ['sensors.' + packet.topic.split("/")[2] + '.value']: parseInt(packet.payload.toString()),
-          // ['sensors.' + packet.topic.split("/")[2] + '.timestamp']: Date.now,
-          $push: { ['sensors.' + packet.topic.split("/")[2] + '.history']: sensorDataPoint } }
+          ['sensors.' + packet.topic.split("/")[2] + '.value']: sensorDataPoint.value,
+          ['sensors.' + packet.topic.split("/")[2] + '.timestamp']: sensorDataPoint.timestamp,
+          $push: { ['sensors.' + packet.topic.split("/")[2] + '.history']: sensorDataPoint }
+        }
       ).exec((error, node) => {
         if (error) return this.services.logger.error(error);
         this.services.logger.info(`Saved: [SENSOR] Added new datapoint to ${client.id}`);
