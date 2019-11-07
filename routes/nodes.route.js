@@ -1,22 +1,22 @@
 const router = require("express").Router({ mergeParams: true });
 const { body, param, query, validationResult } = require("express-validator");
 
-const Node = require('../models/node.model');
-const DataPoint = require('../models/dataPoint.model');
+const Node = require("../models/node.model");
+const DataPoint = require("../models/dataPoint.model");
 
 module.exports = services => {
-
   /**
    * Get all nodes of the logged in user
-   * 
+   *
    * @requires Authorization
-   * 
+   *
    * @returns {Node.Global[]}
    */
-  router.get('/', async (req, res) => {
-    Node
-      .find({ members: req.user.sub })
-      .select("-__v -authorizationKey -sensors.airtemp.history -sensors.watertemp.history -sensors.lightstr.history -sensors.airhumidity.history -sensors.waterph.history")
+  router.get("/", async (req, res) => {
+    Node.find({ members: req.user.sub })
+      .select(
+        "-__v -authorizationKey -sensors.airtemp.history -sensors.watertemp.history -sensors.lightstr.history -sensors.airhumidity.history -sensors.waterph.history"
+      )
       .populate({ path: "members", select: "_id firstname lastname" })
       .exec((error, nodes) => {
         if (error) return res.sendStatus(403);
@@ -26,7 +26,7 @@ module.exports = services => {
 
   /**
    * Get all public nodes
-   * 
+   *
    * @returns {Node.Global[]}
    */
   router.get('/public', [
@@ -55,46 +55,71 @@ module.exports = services => {
 
   /**
    * Get a specific node's data
-   * 
+   *
    * @requires Authorization
-   * 
+   *
    * @returns {Node.Specific}
    */
-  router.get("/:id", [
-    param("id")
-      .isMongoId()
-      .trim()
-      .escape(),
-    query("limit").optional().isNumeric().trim().escape()
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty())
-      return res.sendStatus(422);
+  router.get(
+    "/:id",
+    [
+      param("id")
+        .isMongoId()
+        .trim()
+        .escape(),
+      query("limit")
+        .optional()
+        .isNumeric()
+        .trim()
+        .escape()
+    ],
+    async (req, res) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) return res.sendStatus(422);
 
-    if(!req.query.limit) req.query.limit = 3;
+      if (!req.query.limit) req.query.limit = 3;
 
-    Node
-      .findOne({ _id: req.params.id, members: req.user.sub })
-      .select("-__v -authorizationKey")
-      .populate({ path: "members", select: "_id firstname lastname" })
-      .populate({ path: "sensors.airtemp.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
-      .populate({ path: "sensors.watertemp.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
-      .populate({ path: "sensors.lightstr.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
-      .populate({ path: "sensors.airhumidity.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
-      .populate({ path: "sensors.waterph.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
-      .exec((error, node) => {
-        if (error || !node) return res.sendStatus(403);
+      Node.findOne({ _id: req.params.id, members: req.user.sub })
+        .select("-__v -authorizationKey")
+        .populate({ path: "members", select: "_id firstname lastname" })
+        .populate({
+          path: "sensors.airtemp.history",
+          select: "-_id value timestamp",
+          options: { limit: req.query.limit, sort: "-timestamp" }
+        })
+        .populate({
+          path: "sensors.watertemp.history",
+          select: "-_id value timestamp",
+          options: { limit: req.query.limit, sort: "-timestamp" }
+        })
+        .populate({
+          path: "sensors.lightstr.history",
+          select: "-_id value timestamp",
+          options: { limit: req.query.limit, sort: "-timestamp" }
+        })
+        .populate({
+          path: "sensors.airhumidity.history",
+          select: "-_id value timestamp",
+          options: { limit: req.query.limit, sort: "-timestamp" }
+        })
+        .populate({
+          path: "sensors.waterph.history",
+          select: "-_id value timestamp",
+          options: { limit: req.query.limit, sort: "-timestamp" }
+        })
+        .exec((error, node) => {
+          if (error || !node) return res.sendStatus(403);
 
-        res.send(node);
-      });
-  });
+          res.send(node);
+        });
+    }
+  );
 
   /**
    * Set a node's actuator to a secific value
-   * 
+   *
    * @requires Authorization
-   * 
+   *
    * @returns {HTTPStatus}
    */
   router.put(
@@ -128,9 +153,8 @@ module.exports = services => {
           detail: errors.array()
         });
 
-      Node
-        .findOne({ _id: req.params.id, members: req.user.sub })
-        .exec((error, node) => {
+      Node.findOne({ _id: req.params.id, members: req.user.sub }).exec(
+        (error, node) => {
           if (error || !node) return res.sendStatus(403);
 
           const packet = {
@@ -146,7 +170,8 @@ module.exports = services => {
 
           services.mqtt.publish(packet);
           res.sendStatus(200);
-        });
+        }
+      );
     }
   );
 

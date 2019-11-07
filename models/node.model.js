@@ -55,4 +55,4 @@ const nodeSchema = new mongoose.Schema({
   actions: [{ type: mongoose.Schema.ObjectId, ref: "Actions" }]
 });
 
-module.exports = mongoose.model('Node', nodeSchema);
+module.exports = mongoose.model("Node", nodeSchema);

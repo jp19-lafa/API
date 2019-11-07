@@ -1,27 +1,24 @@
 const express = require("express");
 const cors = require("cors");
 const jwt = require("express-jwt");
-const sentry = require('@sentry/node');
+const sentry = require("@sentry/node");
 const app = express();
 
 module.exports = {
-
   HttpController: class {
-
     constructor(services) {
-
       this.services = services;
 
       this.services.http = app;
 
-      // sentry.init({ dsn: 'https://2d76762c67434792892887d13b2cdda6@sentry.io/1784742' });
+      // sentry.init({ dsn:
+      // 'https://2d76762c67434792892887d13b2cdda6@sentry.io/1784742' });
 
       this._init();
 
       this._registerRoutes();
 
       this._listen();
-
     }
 
     _init() {
@@ -30,11 +27,7 @@ module.exports = {
       app.use(sentry.Handlers.requestHandler());
       app.use(
         jwt({ secret: this.services.keys.private }).unless({
-          path: [
-            "/auth/login",
-            "/auth/refresh",
-            "/nodes/public",
-          ]
+          path: ["/auth/login", "/auth/refresh", "/nodes/public"]
         })
       );
       app.use((err, req, res, next) => {
@@ -73,4 +66,4 @@ module.exports = {
       });
     }
   }
-}
+};
