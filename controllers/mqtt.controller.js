@@ -1,5 +1,5 @@
-const Node = require('../models/node.model');
-const DataPoint = require('../models/dataPoint.model');
+const Node = require("../models/node.model");
+const DataPoint = require("../models/dataPoint.model");
 
 module.exports = {
   MqttController: class {
@@ -9,9 +9,8 @@ module.exports = {
       services.mqtt.authenticate = (client, username, password, callback) => {
         if (!client.id.match(/^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$/))
           callback(null, false);
-        Node
-          .findOne({ macAddress: username, authorizationKey: password })
-          .exec((error, node) => {
+        Node.findOne({ macAddress: username, authorizationKey: password }).exec(
+          (error, node) => {
             if (!node || error) {
               callback(null, false);
               services.logger.info(`Client ${client.id} unauthorized.`);
@@ -19,7 +18,8 @@ module.exports = {
               services.logger.info(`Client ${client.id} authorized.`);
               callback(null, true);
             }
-          });
+          }
+        );
       };
 
       services.mqtt.on("ready", () => {
@@ -28,26 +28,22 @@ module.exports = {
 
       services.mqtt.on("clientDisconnected", function(client) {
         services.logger.info(`Client ${client.id} disconnected.`);
-        Node
-          .findOne({ macAddress: client.id })
-          .exec((error, node) => {
-            if (!node || error) return;
+        Node.findOne({ macAddress: client.id }).exec((error, node) => {
+          if (!node || error) return;
 
-            node.status = false;
-            node.save();
-          });
+          node.status = false;
+          node.save();
+        });
       });
 
       services.mqtt.on("clientConnected", function(client) {
         services.logger.info(`Client ${client.id} connected.`);
-        Node
-          .findOne({ macAddress: client.id })
-          .exec((error, node) => {
-            if (!node || error) return;
+        Node.findOne({ macAddress: client.id }).exec((error, node) => {
+          if (!node || error) return;
 
-            node.status = true;
-            node.save();
-          });
+          node.status = true;
+          node.save();
+        });
       });
 
       services.mqtt.on("published", (packet, client) => {
@@ -88,16 +84,24 @@ module.exports = {
       Node.findOneAndUpdate(
         { macAddress: client.id },
         {
-          ['sensors.' + packet.topic.split("/")[2] + '.value']: sensorDataPoint.value,
-          ['sensors.' + packet.topic.split("/")[2] + '.timestamp']: sensorDataPoint.timestamp,
-          $push: { ['sensors.' + packet.topic.split("/")[2] + '.history']: sensorDataPoint }
+          ["sensors." +
+          packet.topic.split("/")[2] +
+          ".value"]: sensorDataPoint.value,
+          ["sensors." +
+          packet.topic.split("/")[2] +
+          ".timestamp"]: sensorDataPoint.timestamp,
+          $push: {
+            ["sensors." +
+            packet.topic.split("/")[2] +
+            ".history"]: sensorDataPoint
+          }
         }
       ).exec((error, node) => {
         if (error) return this.services.logger.error(error);
-        this.services.logger.info(`Saved: [SENSOR] Added new datapoint to ${client.id}`);
+        this.services.logger.info(
+          `Saved: [SENSOR] Added new datapoint to ${client.id}`
+        );
       });
-
-
     }
 
     // Handle all node actuator related messages

@@ -5,4 +5,4 @@ const dataPointSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now, required: true }
 });
 
-module.exports = mongoose.model('DataPoint', dataPointSchema);
+module.exports = mongoose.model("DataPoint", dataPointSchema);
