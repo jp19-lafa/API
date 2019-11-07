@@ -2,6 +2,7 @@ const router = require("express").Router({ mergeParams: true });
 const { body, param, query, validationResult } = require("express-validator");
 
 const Node = require('../models/node.model');
+const DataPoint = require('../models/dataPoint.model');
 
 module.exports = services => {
 
@@ -69,7 +70,6 @@ module.exports = services => {
       .populate({ path: "sensors.airhumidity.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
       .populate({ path: "sensors.waterph.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
       .exec((error, node) => {
-        console.log(node);
         if (error || !node) return res.sendStatus(403);
 
         res.send(node);
