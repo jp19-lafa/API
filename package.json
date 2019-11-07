@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "mocha --exit",
+    "test": "mocha test/*_spec.js --exit",
     "start": "node app.js"
   },
   "repository": {
@@ -18,17 +18,18 @@
   },
   "homepage": "https://github.com/jp19-lafa/MQTT-API#readme",
   "dependencies": {
+    "@sentry/node": "",
+    "bcrypt": "",
+    "cors": "",
     "express": "",
+    "express-jwt": "",
     "express-validator": "",
     "http-errors": "",
-    "mosca": "",
-    "winston": "",
-    "mongoose": "",
-    "cors": "",
-    "express-jwt": "",
     "jsonwebtoken": "",
-    "bcrypt": "",
-    "uuid": ""
+    "mongoose": "",
+    "mosca": "",
+    "uuid": "",
+    "winston": ""
   },
   "devDependencies": {
     "mocha": "",
