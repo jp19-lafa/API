@@ -13,7 +13,7 @@ const logger = winston.createLogger();
 logger.add(new winston.transports.Console({ format: winston.format.simple() }));
 
 const server = new mosca.Server({
-  port: 1887,
+  port: 1883,
   backend: {
     type: "mongo",
     url: "mongodb://database:27017/mqtt",
@@ -21,12 +21,6 @@ const server = new mosca.Server({
     mongo: {}
   }
 });
-
-// const { userSchema } = require("./models/user.model");
-// const user = database.model("User", userSchema);
-
-// const { nodeSchema } = require("./models/node.model");
-// const node = database.model("Node", nodeSchema);
 
 // Mongoose Connection
 database

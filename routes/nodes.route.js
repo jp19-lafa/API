@@ -63,11 +63,11 @@ module.exports = services => {
       .findOne({ _id: req.params.id, members: req.user.sub })
       .select("-__v -authorizationKey")
       .populate({ path: "members", select: "_id firstname lastname" })
-      .populate({ path: "sensors.airtemp", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
-      .populate({ path: "sensors.watertemp", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
-      .populate({ path: "sensors.lightstr", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
-      .populate({ path: "sensors.airhumidity", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
-      .populate({ path: "sensors.waterph", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
+      .populate({ path: "sensors.airtemp.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
+      .populate({ path: "sensors.watertemp.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
+      .populate({ path: "sensors.lightstr.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
+      .populate({ path: "sensors.airhumidity.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
+      .populate({ path: "sensors.waterph.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
       .exec((error, node) => {
         console.log(node);
         if (error || !node) return res.sendStatus(403);
