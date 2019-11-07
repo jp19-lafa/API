@@ -1,10 +1,6 @@
 const mosca = require("mosca");
 const winston = require("winston");
-const express = require("express");
 const database = require("mongoose");
-const cors = require("cors");
-const jwt = require("express-jwt");
-const app = express();
 const fs = require("fs");
 const { MqttController } = require("./controllers/mqtt.controller");
 const { HttpController } = require("./controllers/http.controller");

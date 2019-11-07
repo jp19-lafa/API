@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const uuidv4 = require("uuid/v4");
 const jwt = require("jsonwebtoken");
 
+// Models
 const User = require('../models/user.model');
 const Node = require('../models/node.model');
 

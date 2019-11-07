@@ -1,4 +1,5 @@
 const Node = require('../models/node.model');
+const DataPoint = require('../models/dataPoint.model');
 
 module.exports = {
   MqttController: class {
