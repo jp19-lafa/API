@@ -1,14 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const jwt = require("express-jwt");
-const sentry = require('@sentry/node');
+const sentry = require("@sentry/node");
 const app = express();
 
 module.exports = {
-
-  HttpController : class {
+  HttpController: class {
     constructor(services) {
-
       this.services = services;
 
       this.services.http = app;
@@ -27,17 +25,16 @@ module.exports = {
       app.use(cors(this._corsOptionDelegate));
       app.use(express.json());
       app.use(sentry.Handlers.requestHandler());
-      app.use(jwt({secret : this.services.keys.private}).unless({
-        path : [
-          "/auth/login",
-          "/auth/refresh",
-          "/nodes/public",
-        ]
-      }));
+      app.use(
+        jwt({ secret: this.services.keys.private }).unless({
+          path: ["/auth/login", "/auth/refresh", "/nodes/public"]
+        })
+      );
       app.use((err, req, res, next) => {
         if (err.name === "UnauthorizedError") {
-          res.status(401).send(
-              {error : "Unautorized", code : 401, reason : "Invalid Token"});
+          res
+            .status(401)
+            .send({ error: "Unautorized", code: 401, reason: "Invalid Token" });
         }
       });
     }
@@ -50,21 +47,23 @@ module.exports = {
 
     _corsOptionDelegate(req, callback) {
       let whitelist = [
-        "http://localhost:4200", "https://api.farmlab.team",
+        "http://localhost:4200",
+        "https://api.farmlab.team",
         "https://api.staging.farmlab.team"
       ];
       let corsOptions;
       if (whitelist.indexOf(req.header("Origin")) !== -1) {
-        corsOptions = {origin : true};
+        corsOptions = { origin: true };
       } else {
-        corsOptions = {origin : false};
+        corsOptions = { origin: false };
       }
       callback(null, corsOptions);
     }
 
     _listen() {
-      app.listen(8080, "0.0.0.0",
-                 () => { this.services.logger.info("HTTP Server Running"); });
+      app.listen(8080, "0.0.0.0", () => {
+        this.services.logger.info("HTTP Server Running");
+      });
     }
   }
-}
+};
