@@ -1,5 +1,5 @@
 const router = require("express").Router({ mergeParams: true });
-const { body, param, validationResult } = require("express-validator");
+const { body, param, query, validationResult } = require("express-validator");
 
 module.exports = services => {
 
