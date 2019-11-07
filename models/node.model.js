@@ -16,7 +16,7 @@ const nodeSchema = new mongoose.Schema({
     },
     watertemp: {
       value: { type: Number, default: -1 },
-      lastChange: { type: Date, default: Date.now },
+      timestamp: { type: Date, default: Date.now },
       history: [{ type: mongoose.Schema.ObjectId, ref: "DataPoint" }]
     },
     lightstr: {

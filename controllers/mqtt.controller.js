@@ -88,7 +88,10 @@ module.exports = {
 
       Node.findOneAndUpdate(
         { macAddress: client.id },
-        { ['sensors.' + packet.topic.split("/")[2] + '.value']: parseInt(packet.payload.toString()), ['sensors.' + packet.topic.split("/")[2] + '.timestamp']: Date.now, $push: { ['sensors.' + packet.topic.split("/")[2] + '.history']: sensorDataPoint } }
+        {
+          // ['sensors.' + packet.topic.split("/")[2] + '.value']: parseInt(packet.payload.toString()),
+          // ['sensors.' + packet.topic.split("/")[2] + '.timestamp']: Date.now,
+          $push: { ['sensors.' + packet.topic.split("/")[2] + '.history']: sensorDataPoint } }
       ).exec((error, node) => {
         if (error) return this.services.logger.error(error);
         this.services.logger.info(`Saved: [SENSOR] Added new datapoint to ${client.id}`);
