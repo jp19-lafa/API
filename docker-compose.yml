@@ -1,26 +1,24 @@
 version: "3.7"
 
 volumes:
-  farmlab-db-data:
-  farmlab-db-conf:
+  db-data:
+  db-conf:
 
 services:
   api:
     image: registry.mira.systems/farmlab/mqtt-api:latest
-    container_name: "farmlab-api"
+    container_name: FarmLab-API
     restart: unless-stopped
     ports:
-      - 1887:1887
+      - 1883:1883
       - 8080:8080
-    depends_on:
-      - database
     volumes:
       - ./keys:keys
 
   database:
-    image: mongo
-    container_name: "farmlab-db"
+    image: mongo:latest
+    container_name: FarmLab-DB
     restart: unless-stopped
     volumes:
-      - farmlab-db-data:/data/db
-      - farmlab-db-conf:/data/configdb
+      - db-data:/data/db
+      - db-conf:/data/configdb
