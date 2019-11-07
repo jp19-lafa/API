@@ -29,13 +29,27 @@ module.exports = services => {
    * 
    * @returns {Node.Global[]}
    */
-  router.get('/public', async (req, res) => {
+  router.get('/public', [
+    query("limit").optional().isNumeric().trim().escape()
+  ], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.sendStatus(422);
+
+    if(!req.query.limit) req.query.limit = 3;
+
     Node
       .find({ allowPublicStats: true })
-      .select("-__v -authorizationKey")
-      .exec((error, nodes) => {
-        if (error) return res.sendStatus(403);
-        res.send(nodes);
+      .select("-__v -authorizationKey -members")
+      .populate({ path: "sensors.airtemp.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
+      .populate({ path: "sensors.watertemp.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
+      .populate({ path: "sensors.lightstr.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
+      .populate({ path: "sensors.airhumidity.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
+      .populate({ path: "sensors.waterph.history", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
+      .exec((error, node) => {
+        if (error || !node) return res.sendStatus(403);
+
+        res.send(node);
       });
   });
 
