@@ -22,11 +22,11 @@ const server = new mosca.Server({
   }
 });
 
-const { userSchema } = require("./models/user.model");
-const user = database.model("User", userSchema);
+// const { userSchema } = require("./models/user.model");
+// const user = database.model("User", userSchema);
 
-const { nodeSchema } = require("./models/node.model");
-const node = database.model("Node", nodeSchema);
+// const { nodeSchema } = require("./models/node.model");
+// const node = database.model("Node", nodeSchema);
 
 // Mongoose Connection
 database
@@ -70,7 +70,7 @@ let services = {
   database: database,
   mqtt: server,
   logger: logger,
-  models: { user: user, node: node },
+  // models: { user: user, node: node },
   keys: {
     private: fs.readFileSync("keys/private.key"),
     public: fs.readFileSync("keys/public.key")

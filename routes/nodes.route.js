@@ -1,6 +1,8 @@
 const router = require("express").Router({ mergeParams: true });
 const { body, param, query, validationResult } = require("express-validator");
 
+const Node = require('../models/node.model');
+
 module.exports = services => {
 
   /**
@@ -11,7 +13,7 @@ module.exports = services => {
    * @returns {Node.Global[]}
    */
   router.get('/', async (req, res) => {
-    services.models.node
+    Node
       .find({ members: req.user.sub })
       .select("-__v -authorizationKey")
       .populate({ path: "members", select: "_id firstname lastname" })
@@ -27,7 +29,7 @@ module.exports = services => {
    * @returns {Node.Global[]}
    */
   router.get('/public', async (req, res) => {
-    services.models.node
+    Node
       .find({ allowPublicStats: true })
       .select("-__v -authorizationKey")
       .exec((error, nodes) => {
@@ -57,7 +59,7 @@ module.exports = services => {
 
     if(!req.query.limit) req.query.limit = 1;
 
-    services.database.models.node
+    Node
       .findOne({ _id: req.params.id, members: req.user.sub })
       .select("-__v -authorizationKey")
       .populate({ path: "members", select: "_id firstname lastname" })
@@ -67,6 +69,7 @@ module.exports = services => {
       .populate({ path: "sensors.airhumidity", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
       .populate({ path: "sensors.waterph", select: "-_id value timestamp", options: { limit: req.query.limit, sort: '-timestamp' }})
       .exec((error, node) => {
+        console.log(node);
         if (error || !node) return res.sendStatus(403);
 
         res.send(node);
@@ -111,7 +114,7 @@ module.exports = services => {
           detail: errors.array()
         });
 
-      services.models.node
+      Node
         .findOne({ _id: req.params.id, members: req.user.sub })
         .exec((error, node) => {
           if (error || !node) return res.sendStatus(403);

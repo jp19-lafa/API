@@ -1,3 +1,5 @@
+const Node = require('../models/node.model');
+
 module.exports = {
   MqttController: class {
     constructor(services) {
@@ -6,7 +8,7 @@ module.exports = {
       services.mqtt.authenticate = (client, username, password, callback) => {
         if (!client.id.match(/^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$/))
           callback(null, false);
-        services.models.node
+        Node
           .findOne({ macAddress: username, authorizationKey: password })
           .exec((error, node) => {
             if (!node || error) {
@@ -25,7 +27,7 @@ module.exports = {
 
       services.mqtt.on("clientDisconnected", function(client) {
         services.logger.info(`Client ${client.id} disconnected.`);
-        services.models.node
+        Node
           .findOne({ macAddress: client.id })
           .exec((error, node) => {
             if (!node || error) return;
@@ -37,7 +39,7 @@ module.exports = {
 
       services.mqtt.on("clientConnected", function(client) {
         services.logger.info(`Client ${client.id} connected.`);
-        services.models.node
+        Node
           .findOne({ macAddress: client.id })
           .exec((error, node) => {
             if (!node || error) return;
