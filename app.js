@@ -2,50 +2,53 @@ const mosca = require("mosca");
 const winston = require("winston");
 const database = require("mongoose");
 const fs = require("fs");
-const {MqttController} = require("./controllers/mqtt.controller");
-const {HttpController} = require("./controllers/http.controller");
+const { MqttController } = require("./controllers/mqtt.controller");
+const { HttpController } = require("./controllers/http.controller");
 
 const logger = winston.createLogger();
 
-logger.add(new winston.transports.Console({format : winston.format.simple()}));
+logger.add(new winston.transports.Console({ format: winston.format.simple() }));
 
 const server = new mosca.Server({
-  port : 1883,
-  backend : {
-    type : "mongo",
-    url : "mongodb://database:27017/mqtt",
-    pubsubCollection : "ascoltatori",
-    mongo : {}
+  port: 1883,
+  backend: {
+    type: "mongo",
+    url: "mongodb://database:27017/mqtt",
+    pubsubCollection: "ascoltatori",
+    mongo: {}
   }
 });
 
 // Mongoose Connection
 database
-    .connect("mongodb://database:27017/farmlab", {
-      useNewUrlParser : true,
-      useFindAndModify : false,
-      useUnifiedTopology : true,
-      useCreateIndex : true
-    })
-    .then(() => logger.info("Database Connected"), err => {
+  .connect("mongodb://database:27017/farmlab", {
+    useNewUrlParser: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true,
+    useCreateIndex: true
+  })
+  .then(
+    () => logger.info("Database Connected"),
+    err => {
       logger.error("Database Connection Error", err);
       process.exit(1);
-    });
+    }
+  );
 
 // Define app wide services
 let services = {
-  database : database,
-  mqtt : server,
-  http : {},
-  logger : logger,
+  database: database,
+  mqtt: server,
+  http: {},
+  logger: logger,
   // models: { user: user, node: node },
-  keys : {
-    private : fs.readFileSync("keys/private.key"),
-    public : fs.readFileSync("keys/public.key")
+  keys: {
+    private: fs.readFileSync("keys/private.key"),
+    public: fs.readFileSync("keys/public.key")
   },
-  types : {
-    actuators : [ "lightint", "flowpump", "foodpump" ],
-    sensors : [ "airtemp", "watertemp", "lightstr", "airhumidity", "waterph" ]
+  types: {
+    actuators: ["lightint", "flowpump", "foodpump"],
+    sensors: ["airtemp", "watertemp", "lightstr", "airhumidity", "waterph"]
   }
 };
 
