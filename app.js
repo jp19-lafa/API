@@ -7,6 +7,7 @@ const jwt = require("express-jwt");
 const app = express();
 const fs = require("fs");
 const { MqttController } = require("./controllers/mqtt.controller");
+const { HttpController } = require("./controllers/http.controller");
 
 const logger = winston.createLogger();
 
@@ -38,31 +39,11 @@ database
     }
   );
 
-// CORS
-const whitelist = [
-  "http://localhost:4200",
-  "https://api.farmlab.team",
-  "https://api.staging.farmlab.team"
-];
-const corsOptionsDelegate = (req, callback) => {
-  var corsOptions;
-  if (whitelist.indexOf(req.header("Origin")) !== -1) {
-    corsOptions = { origin: true };
-  } else {
-    corsOptions = { origin: false };
-  }
-  callback(null, corsOptions);
-};
-
-app.use(cors(corsOptionsDelegate));
-
-// JSON Body parsing
-app.use(express.json());
-
 // Define app wide services
 let services = {
   database: database,
   mqtt: server,
+  http: {},
   logger: logger,
   // models: { user: user, node: node },
   keys: {
@@ -77,30 +58,6 @@ let services = {
 
 let mqttController = new MqttController(services);
 
-app.use(
-  jwt({ secret: services.keys.private }).unless({
-    path: [
-      "/auth/login",
-      "/auth/refresh",
-      "/nodes/public",
-    ]
-  })
-);
+let httpController = new HttpController(services);
 
-// Routes
-app.use("/auth", require("./routes/auth.route")(services));
-app.use("/nodes", require("./routes/nodes.route")(services));
-
-app.use(function(err, req, res, next) {
-  if (err.name === "UnauthorizedError") {
-    res
-      .status(401)
-      .send({ error: "Unautorized", code: 401, reason: "Invalid Token" });
-  }
-});
-
-app.listen(8080, "0.0.0.0", () => {
-  logger.info("HTTP Server Running");
-});
-
-module.exports = app;
+module.exports = services;
