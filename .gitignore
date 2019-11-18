@@ -2,3 +2,4 @@ node_modules
 keys/*
 !keys/readme.md
 .vscode
+dist/

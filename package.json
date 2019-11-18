@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "mocha test/*_spec.js --exit",
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "ts-node index --inspect"
   },
   "repository": {
     "type": "git",
@@ -20,19 +21,40 @@
   "dependencies": {
     "@sentry/node": "",
     "bcrypt": "",
+    "config": "^3.2.4",
     "cors": "",
     "express": "",
     "express-jwt": "",
     "express-validator": "",
     "http-errors": "",
     "jsonwebtoken": "",
+    "module-alias": "",
     "mongoose": "",
     "mosca": "",
     "uuid": "",
     "winston": ""
   },
   "devDependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/config": "0.0.36",
+    "@types/express": "^4.17.2",
+    "@types/jsonwebtoken": "^8.3.5",
+    "@types/module-alias": "^2.0.0",
+    "@types/mongoose": "^5.5.31",
+    "@types/node": "",
+    "@types/uuid": "^3.4.6",
     "mocha": "",
-    "supertest": ""
+    "nodemon": "",
+    "supertest": "",
+    "ts-node": "",
+    "typescript": ""
+  },
+  "_moduleAliases": {
+    "@root": ".",
+    "@app": "./app",
+    "@routes": "./routes",
+    "@modules": "./modules",
+    "@models": "./models",
+    "@database": "./db"
   }
 }

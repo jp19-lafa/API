@@ -1,0 +1,18 @@
+{
+  "database": {
+    "host": "localhost",
+    "port": "27017",
+    "name": "farmlab"
+  },
+  "debug": {
+    "logging": true,
+    "sentry": false
+  },
+  "port": 8080,
+  "jwt": {
+    "signingkey": "Unsafe signing key",
+    "issuer": "farmlab.team",
+    "audience": "farmlab.team",
+    "expiresIn": "24h"
+  }
+}
