@@ -5,6 +5,7 @@ import sentry from "@sentry/node";
 // Routes
 import { AuthRoute } from './modules/auth/auth.route';
 import { NodesRoute } from './modules/nodes/nodes.route';
+import { SensorsRoute } from './modules/sensors/sensors.route';
 
 // Middleware
 import { AuthMiddleware } from '@modules/auth/auth.middleware';
@@ -60,6 +61,7 @@ export class App {
   private initRoutes() {
     this.app.use('/auth', new AuthRoute().getRouter());
     this.app.use('/nodes', new NodesRoute().getRouter());
+    this.app.use('/sensors', new SensorsRoute().getRouter());
   }
 
   /**
