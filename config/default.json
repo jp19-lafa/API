@@ -2,7 +2,7 @@
   "database": {
     "host": "localhost",
     "port": "27017",
-    "name": "farmlab"
+    "name": "farmlab_v2"
   },
   "debug": {
     "logging": true,

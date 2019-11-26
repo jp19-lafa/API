@@ -1,9 +1,19 @@
 import { connect, connection, Connection } from 'mongoose';
-import { UserModel, User } from './models/user.model';
+
+// Config
 import config from 'config';
+
+// Models
+import { UserModel, User } from './models/user.model';
+import { NodeModel, Node } from '@models/node.model';
+import { SensorDataPointModel, SensorDataPoint } from '@models/sensorDataPoint.model';
+import { SensorModel, Sensor } from '@models/sensor.model';
 
 declare interface IModels {
   User: UserModel;
+  Node: NodeModel;
+  Sensor: SensorModel;
+  SensorDataPoint: SensorDataPointModel;
 }
 
 export class Database {
@@ -27,7 +37,10 @@ export class Database {
     this._db.on('error', this.error);
 
     this._models = {
-      User: new User().model
+      User: new User().model,
+      Node: new Node().model,
+      Sensor: new Sensor().model,
+      SensorDataPoint: new SensorDataPoint().model
     }
   }
 

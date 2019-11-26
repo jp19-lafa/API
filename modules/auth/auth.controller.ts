@@ -28,7 +28,9 @@ export class AuthController extends BaseController {
     res.status(200).send(tokenSet);
   }
 
-  public refresh = async (req: Request, res: Response) => {}
+  public refresh = async (req: Request, res: Response) => {
+    
+  }
 
   public register = async (req: Request, res: Response) => {}
 

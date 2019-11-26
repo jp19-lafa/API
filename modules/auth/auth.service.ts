@@ -37,6 +37,19 @@ export class AuthService extends BaseService {
     });
   }
 
+  public async authenticateUserByRefreshToken(token: string) {
+    return new Promise((resolve, reject) => {
+      Database.Models.User.findOne({ refreshToken: token })
+        .then(user => {
+          if (!user) return reject(new Error('Invalid Token'));
+          resolve(user);
+        })
+        .catch(error => {
+          reject(new Error('ServerError'));
+        });
+    });
+  }
+
   public async generateTokenSet(user: IUser): Promise<{ jwt: string, refresh: string }> {
     return new Promise<{ jwt: string, refresh: string }>((resolve, reject) => {
       const refreshToken = uuidv4();
