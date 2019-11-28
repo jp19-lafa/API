@@ -4,6 +4,14 @@
     "port": "27017",
     "name": "farmlab_v2"
   },
+  "mqtt": {
+    "database": {
+      "host": "localhost",
+      "port": "27017",
+      "name": "farmlab_mqtt"
+    },
+    "port": 1883
+  },
   "debug": {
     "logging": true,
     "sentry": false

@@ -48,6 +48,9 @@
       "@database": [
         "./db"
       ],
+      "@mqtt": [
+        "./mqtt"
+      ],
       "@models/*": [
         "./models/*"
       ],

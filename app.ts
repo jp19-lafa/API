@@ -11,10 +11,12 @@ import { SensorsRoute } from './modules/sensors/sensors.route';
 import { AuthMiddleware } from '@modules/auth/auth.middleware';
 import jwt from 'express-jwt';
 import { DatabaseSeed } from './temp/db.seeds';
+import { Mqtt } from './mqtt';
 
 export class App {
   private readonly app: express.Application;
   private readonly port: number;
+
   private readonly authMiddleware: AuthMiddleware = new AuthMiddleware();
 
   constructor() {
@@ -42,6 +44,9 @@ export class App {
     this.initRoutes();
 
     this.seedDB();
+
+    // Force MQTT start (singleton)
+    Mqtt.Server;
   }
 
   /**
