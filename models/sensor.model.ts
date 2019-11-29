@@ -7,11 +7,11 @@ export declare interface ISensor extends Document {
 }
 
 export declare enum SensorType {
-  airtemp,
-  watertemp,
-  lightstr,
-  airhumidity,
-  waterph
+  AirTemperature = 'airtemp',
+  WaterTemperature = 'watertemp',
+  LightStrength = 'lightstr',
+  AirHumidity = 'airhumidity',
+  WaterPH = 'waterph'
 }
 
 export interface SensorModel extends Model<ISensor> { };

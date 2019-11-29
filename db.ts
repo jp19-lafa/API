@@ -8,12 +8,16 @@ import { UserModel, User } from './models/user.model';
 import { NodeModel, Node } from '@models/node.model';
 import { SensorDataPointModel, SensorDataPoint } from '@models/sensorDataPoint.model';
 import { SensorModel, Sensor } from '@models/sensor.model';
+import { ActuatorDataPointModel, ActuatorDataPoint } from '@models/actuatorDataPoint.model';
+import { ActuatorModel, Actuator } from '@models/actuator.model';
 
 declare interface IModels {
   User: UserModel;
   Node: NodeModel;
   Sensor: SensorModel;
   SensorDataPoint: SensorDataPointModel;
+  Actuator: ActuatorModel;
+  ActuatorDataPoint: ActuatorDataPointModel;
 }
 
 export class Database {
@@ -40,7 +44,9 @@ export class Database {
       User: new User().model,
       Node: new Node().model,
       Sensor: new Sensor().model,
-      SensorDataPoint: new SensorDataPoint().model
+      SensorDataPoint: new SensorDataPoint().model,
+      Actuator: new Actuator().model,
+      ActuatorDataPoint: new ActuatorDataPoint().model
     }
   }
 

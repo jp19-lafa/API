@@ -3,7 +3,7 @@ import { Database } from "@database";
 import { INode } from "@models/node.model";
 import { ISensor } from "@models/sensor.model";
 import { ISensorDataPoint } from "@models/sensorDataPoint.model";
-
+import { IUser } from "@models/user.model";
 
 export class NodesService extends BaseService {
 
@@ -11,7 +11,12 @@ export class NodesService extends BaseService {
     super();
   }
 
-  public async getAllMyNodes(user: any): Promise<INode[]> {
+  /**
+   * Get all nodes belonging to a specific user
+   * @param {IUser} user The requesting user
+   * @returns {Promise<INode[]>} Array of nodes
+   */
+  public async getAllMyNodes(user: IUser): Promise<INode[]> {
     return new Promise<INode[]>((resolve, reject) => {
       Database.Models.Node.find({ members: user.id })
         .select("-__v -authorizationKey -macAddress")
@@ -23,6 +28,10 @@ export class NodesService extends BaseService {
           path: "sensors",
           select: "-__v",
         })
+        .populate({
+          path: "actuators",
+          select: "-__v",
+        })
         .exec((err, nodes) => {
           if (err) return reject(new Error(err.name));
           else if (!nodes) return reject(new Error('NotFound'));
@@ -31,7 +40,13 @@ export class NodesService extends BaseService {
     });
   }
 
-  public async getMyNodeById(user: any, nodeid: string): Promise<INode> {
+  /**
+   * Get a specific node by id
+   * @param {IUser} user The requesting user
+   * @param {string} nodeid The specific node identifier
+   * @returns {Promise<INode>} The specific node
+   */
+  public async getMyNodeById(user: IUser, nodeid: string): Promise<INode> {
     return new Promise<INode>((resolve, reject) => {
       Database.Models.Node.findOne({ members: user.id, _id: nodeid })
         .select("-__v -authorizationKey -macAddress")
@@ -43,6 +58,10 @@ export class NodesService extends BaseService {
           path: "sensors",
           select: "-__v",
         })
+        .populate({
+          path: "actuators",
+          select: "-__v",
+        })
         .exec((err, nodes) => {
           if (err) return reject(new Error(err.name));
           else if (!nodes) return reject(new Error('NotFound'));
@@ -51,20 +70,4 @@ export class NodesService extends BaseService {
     });
   }
 
-  // TODO Check is user is in Node.user
-  public async getSensorReadings(sensorid: string): Promise<ISensorDataPoint[]> {
-    return new Promise<ISensorDataPoint[]>((resolve, reject) => {
-      Database.Models.Sensor.find({
-        parent: sensorid,
-      })
-        .sort('-timestamp')
-        .limit(5)
-        .select('-__v -_id')
-        .exec((err, nodes) => {
-          if (err) return reject(new Error(err.name));
-          else if (!nodes) return reject(new Error('NotFound'));
-          else return resolve(nodes);
-        });
-    });
-  }
 }

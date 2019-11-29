@@ -1,7 +1,7 @@
-import { Database } from "@database";
-import { IUser } from "@models/user.model";
-import { INode } from "@models/node.model";
-import { v4 } from "uuid";
+import { Database } from '@database';
+import { IUser } from '@models/user.model';
+import { INode } from '@models/node.model';
+import { v4 as uuidv4 } from 'uuid';
 
 export class DatabaseSeed {
 
@@ -9,7 +9,7 @@ export class DatabaseSeed {
   }
 
   public async seed() {
-    if(await Database.Models.User.exists({ email: 'admin@farmlab.team' })) return;
+    if (await Database.Models.User.exists({ email: 'admin@farmlab.team' })) return;
     console.log('Creating database seed');
     const user = await this.seedUser();
     console.log('Created user:', user);
@@ -29,27 +29,38 @@ export class DatabaseSeed {
     });
   }
 
-  seedNode(userid: string) {
+  async seedNode(userid: string) {
     const sensorsTypes = ['airtemp', 'watertemp', 'lightstr', 'airhumidity', 'waterph'];
-    return new Promise<INode>((resolve, reject) => {
-      let sensorsPromises = [];
+    const actuatorTypes = ['lightint', 'flowpump', 'foodpump'];
+    return new Promise<INode>(async (resolve, reject) => {
+      let sensorPromises = [];
       sensorsTypes.forEach(sensor => {
         let sensorShema = new Database.Models.Sensor({
           type: sensor
         });
-        sensorsPromises.push(sensorShema.save());
+        sensorPromises.push(sensorShema.save());
       });
 
-      Promise.all(sensorsPromises).then(sensorObjects => {
-        const node = new Database.Models.Node({
-          label: "Dev Node Alfa",
-          macAddress: "AA:AA:AA:AA:AA:AA",
-          authorizationKey: v4(),
-          members: userid,
-          sensors: sensorObjects,
+      let actuatorPromises = [];
+      actuatorTypes.forEach(actuator => {
+        let actuatorShema = new Database.Models.Actuator({
+          type: actuator
         });
-        node.save().then(user => { resolve(user) }).catch(error => { reject(error) });
+        actuatorPromises.push(actuatorShema.save());
       });
+
+      let sensorObjects = await Promise.all(sensorPromises);
+      let actuatorObjects = await Promise.all(actuatorPromises);
+
+      const node = new Database.Models.Node({
+        label: 'Dev Node Alfa',
+        macAddress: 'AA:AA:AA:AA:AA:AA',
+        authorizationKey: uuidv4(),
+        members: userid,
+        sensors: sensorObjects,
+        actuators: actuatorObjects,
+      });
+      node.save().then(user => { resolve(user) }).catch(error => { reject(error) });
 
     })
   }

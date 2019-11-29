@@ -9,8 +9,14 @@ export class SensorsService extends BaseService {
     super();
   }
 
-  // TODO Check is user is in Node.user
-  public async getSensorReadings(sensorid: string, limit: number = 5): Promise<ISensorDataPoint[]> {
+  /**
+   * Get sensor datapoints of a specific sensor
+   * @param {string} sensorid The specific sensor identifier
+   * @param {number} limit Amount of datapoints to be returned
+   * @returns {Promise<ISensorDataPoint[]>} Array of Sensor Datapoints
+   */
+  public async getSensorDataPoints(sensorid: string, limit: number = 5): Promise<ISensorDataPoint[]> {
+    // TODO Check if user is in Node.user
     return new Promise<ISensorDataPoint[]>((resolve, reject) => {
         Database.Models.SensorDataPoint.find({
           parent: sensorid,
@@ -25,12 +31,4 @@ export class SensorsService extends BaseService {
         });
     });
   }
-}
-
-export enum SensorType {
-  AirTemperature = 'airtemp',
-  WaterTemperature = 'watertemp',
-  LightStrength = 'lightstr',
-  AirHumidity = 'airhumidity',
-  WaterPH = 'waterph'
 }

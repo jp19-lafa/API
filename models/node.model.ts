@@ -1,6 +1,7 @@
 import { Schema, model, Document, Model, Types } from 'mongoose';
 import { IUser } from './user.model';
 import { ISensor } from './sensor.model';
+import { IActuator } from './actuator.model';
 
 export declare interface INode extends Document {
   label: string,
@@ -11,6 +12,7 @@ export declare interface INode extends Document {
   allowPublicStats: boolean,
   members: Types.ObjectId[] | IUser[],
   sensors: Types.ObjectId[] | ISensor[],
+  actuators: Types.ObjectId[] | IActuator[]
   // actuators: {
   //   lightint: {
   //     value: number,
@@ -46,23 +48,7 @@ export class Node {
       allowPublicStats: { type: Boolean, default: false },
       members: [{ type: Types.ObjectId, ref: "User" }],
       sensors: [{ type: Types.ObjectId, ref: "Sensor" }],
-      // actuators: {
-      //   lightint: {
-      //     value: { type: Number, default: -1 },
-      //     timestamp: { type: Date, default: Date.now },
-      //     history: [{ type: Types.ObjectId, ref: "DataPoint" }]
-      //   },
-      //   flowpump: {
-      //     value: { type: Number, default: -1 },
-      //     timestamp: { type: Date, default: Date.now },
-      //     history: [{ type: Types.ObjectId, ref: "DataPoint" }]
-      //   },
-      //   foodpump: {
-      //     value: { type: Number, default: -1 },
-      //     timestamp: { type: Date, default: Date.now },
-      //     history: [{ type: Types.ObjectId, ref: "DataPoint" }]
-      //   }
-      // }
+      actuators: [{ type: Types.ObjectId, ref: "Actuator" }]
     });
 
     this._model = model<INode>('Node', schema);

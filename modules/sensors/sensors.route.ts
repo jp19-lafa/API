@@ -11,6 +11,6 @@ export class SensorsRoute extends BaseRoute {
   }
 
   protected initRoutes() {
-    this.router.get('/:id', [], this.controller.getSensorReadings);
+    this.router.get('/:id', [], this.controller.getSensorDataPoints);
   }
 }
