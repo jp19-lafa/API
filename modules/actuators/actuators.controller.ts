@@ -12,9 +12,17 @@ export class ActuatorsController extends BaseController {
     this.actuatorsService = new ActuatorsService();
   }
 
+  public getActuator = async (req: Request, res: Response) => {
+    this.actuatorsService.getActuatorDataPoints(req.params.id, parseInt(req.query.limit)).then(actuator => {
+      res.send({ data: actuator });
+    }).catch(error => {
+      res.send(new NotFound());
+    });
+  }
+
   public patchActuator = async (req: Request, res: Response) => {
-    this.actuatorsService.updateActuatorState(req.params.id, req.body.value).then(sensorState => {
-      res.send({ data: sensorState });
+    this.actuatorsService.updateActuatorState(req.user, req.params.id, req.body.value).then(actuatorState => {
+      res.send({ data: actuatorState });
     }).catch(error => {
       res.send(new NotFound());
     });

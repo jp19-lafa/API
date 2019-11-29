@@ -11,6 +11,7 @@ export class ActuatorsRoute extends BaseRoute {
   }
 
   protected initRoutes() {
-    // this.router.get('/:id', [], this.controller.getSensorReadings);
+    this.router.get('/:id', [], this.controller.getActuator);
+    this.router.patch('/:id', [], this.controller.patchActuator);
   }
 }

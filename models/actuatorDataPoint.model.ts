@@ -15,7 +15,7 @@ export class ActuatorDataPoint {
     const schema = new Schema({
       value: { type: Number, required: true },
       timestamp: { type: Date, default: Date.now, required: true },
-      parent: [{ type: Types.ObjectId, ref: "Actuator" }]
+      parent: { type: Types.ObjectId, ref: "Actuator" }
     });
 
     this._model = model<IActuatorDataPoint>('ActuatorDataPoint', schema);

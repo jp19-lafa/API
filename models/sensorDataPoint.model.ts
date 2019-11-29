@@ -15,7 +15,7 @@ export class SensorDataPoint {
     const schema = new Schema({
       value: { type: Number, required: true },
       timestamp: { type: Date, default: Date.now, required: true },
-      parent: [{ type: Types.ObjectId, ref: "Sensor" }]
+      parent: { type: Types.ObjectId, ref: "Sensor" }
     });
 
     this._model = model<ISensorDataPoint>('SensorDataPoint', schema);

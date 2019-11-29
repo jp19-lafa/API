@@ -12,6 +12,7 @@ import { AuthMiddleware } from '@modules/auth/auth.middleware';
 import jwt from 'express-jwt';
 import { DatabaseSeed } from './temp/db.seeds';
 import { Mqtt } from './mqtt';
+import { ActuatorsRoute } from '@modules/actuators/actuators.route';
 
 export class App {
   private readonly app: express.Application;
@@ -67,6 +68,7 @@ export class App {
     this.app.use('/auth', new AuthRoute().getRouter());
     this.app.use('/nodes', new NodesRoute().getRouter());
     this.app.use('/sensors', new SensorsRoute().getRouter());
+    this.app.use('/actuators', new ActuatorsRoute().getRouter());
   }
 
   /**
