@@ -1,5 +1,5 @@
-import { BaseService } from "@modules/base.service";
-import { Database } from "@database";
+import { BaseService } from '@modules/base.service';
+import { Database } from '@database';
 
 
 export class ActuatorsService extends BaseService {
@@ -15,4 +15,10 @@ export class ActuatorsService extends BaseService {
       resolve();
     });
   }
+}
+
+export enum ActuatorType {
+  LightIntensity = 'lightint',
+  FlowPump = 'flowpump',
+  FoodPump = 'foodpump'
 }

@@ -1,6 +1,6 @@
-import { BaseService } from "@modules/base.service";
-import { Database } from "@database";
-import { ISensorDataPoint } from "@models/sensorDataPoint.model";
+import { BaseService } from '@modules/base.service';
+import { Database } from '@database';
+import { ISensorDataPoint } from '@models/sensorDataPoint.model';
 
 
 export class SensorsService extends BaseService {
@@ -25,4 +25,12 @@ export class SensorsService extends BaseService {
         });
     });
   }
+}
+
+export enum SensorType {
+  AirTemperature = 'airtemp',
+  WaterTemperature = 'watertemp',
+  LightStrength = 'lightstr',
+  AirHumidity = 'airhumidity',
+  WaterPH = 'waterph'
 }
