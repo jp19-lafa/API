@@ -13,6 +13,7 @@ import jwt from 'express-jwt';
 import { DatabaseSeed } from './temp/db.seeds';
 import { Mqtt } from './mqtt';
 import { ActuatorsRoute } from '@modules/actuators/actuators.route';
+import { readFileSync } from 'fs';
 
 export class App {
   private readonly app: express.Application;
@@ -26,8 +27,10 @@ export class App {
 
     this.app.use(express.json());
 
+    this.app.use(sentry.Handlers.requestHandler());
+
     this.app.use(jwt({
-      secret: config.get('jwt.signingkey'),
+      secret: readFileSync("keys/private.key"),
       requestProperty: 'token'
     }).unless({
       path: [
@@ -38,6 +41,8 @@ export class App {
       ]
     }));
 
+    this.app.use(this.unauthorizedException);
+
     this.app.use(this.authMiddleware.injectUser);
 
     this.initSentry();
@@ -45,6 +50,7 @@ export class App {
     this.initRoutes();
 
     this.seedDB();
+    
 
     // Force MQTT start (singleton)
     Mqtt.Server;
@@ -69,6 +75,17 @@ export class App {
     this.app.use('/nodes', new NodesRoute().getRouter());
     this.app.use('/sensors', new SensorsRoute().getRouter());
     this.app.use('/actuators', new ActuatorsRoute().getRouter());
+  }
+
+  /**
+   * InvalidToken Exception
+   */
+  private unauthorizedException(err, req, res, next) {
+    if (err.name === "UnauthorizedError") {
+      res
+        .status(401)
+        .send({ error: "Unautorized", code: 401, reason: "Invalid Token" });
+    }
   }
 
   /**
