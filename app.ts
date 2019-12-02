@@ -1,6 +1,6 @@
 import express from 'express';
 import config from 'config';
-import sentry from "@sentry/node";
+import { init, Handlers } from "@sentry/node";
 
 // Routes
 import { AuthRoute } from './modules/auth/auth.route';
@@ -27,7 +27,7 @@ export class App {
 
     this.app.use(express.json());
 
-    this.app.use(sentry.Handlers.requestHandler());
+    this.app.use(Handlers.requestHandler());
 
     this.app.use(jwt({
       secret: readFileSync("keys/private.key"),
@@ -61,7 +61,7 @@ export class App {
    */
   private initSentry() {
     if (config.has('debug.sentry') && !config.get('debug.sentry')) return;
-    sentry.init({
+    init({
       dsn: 'https://2d76762c67434792892887d13b2cdda6@sentry.io/1784742',
       environment: process.env.NODE_ENV
     });
@@ -84,7 +84,7 @@ export class App {
     if (err.name === "UnauthorizedError") {
       res
         .status(401)
-        .send({ error: "Unautorized", code: 401, reason: "Invalid Token" });
+        .send(new Error('InvalidToken'));
     }
   }
 

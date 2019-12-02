@@ -6,11 +6,15 @@ import bcrypt from 'bcrypt';
 import uuidv4 from 'uuid/v4';
 import config from 'config';
 import { sign } from 'jsonwebtoken';
+import { readFileSync } from "fs";
 
 export class AuthService extends BaseService {
 
+  protected privateKey: Buffer;
+
   constructor() {
     super();
+    this.privateKey = readFileSync('keys/private.key');
   }
 
   public async getOneById(userid: string): Promise<IUser> {
@@ -80,7 +84,7 @@ export class AuthService extends BaseService {
         sub: args.subject,
         email: args.email
       },
-      config.get('jwt.signingkey'),
+      this.privateKey,
       {
         expiresIn: config.get('jwt.expiresIn')
       }
