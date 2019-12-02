@@ -1,14 +1,14 @@
 import { BaseService } from '@modules/base.service';
 import { Database } from '@database';
 import { IActuatorDataPoint } from '@models/actuatorDataPoint.model';
-import { Mqtt } from '@mqtt';
 import { IUser } from '@models/user.model';
 import { INode } from '@models/node.model';
 import { IActuator } from '@models/actuator.model';
-import { Message } from 'mosca';
-
+import { MqttService } from '@modules/mqtt/mqtt.service';
 
 export class ActuatorsService extends BaseService {
+
+  private mqttSerivce: MqttService = new MqttService();
 
   constructor() {
     super();
@@ -48,21 +48,14 @@ export class ActuatorsService extends BaseService {
     // TODO Better error handling
     return new Promise<IActuator>(async (resolve, reject) => {
 
-      // TODO Enforce user check
       let node: INode = await this.getParentNodeByActuatorId(user, actuatorId);
 
       let actuator: IActuator = await this.updateActuatorValueById(actuatorId, value);
 
-      let message: Message = {
-        topic: `${node.macAddress}/actuator/${actuator.type}`,
-        payload: value,
-        qos: 2,
-        retain: false
-      };
+      if(!node || !actuator) return reject(new Error('ServerError'));
 
-      Mqtt.Server.publish(message, () => {
-        resolve(actuator);
-      });
+      resolve(await this.mqttSerivce.sendActuatorUpdateMessage(node, actuator, value));
+
     });
   }
 

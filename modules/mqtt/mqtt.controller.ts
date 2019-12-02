@@ -1,5 +1,4 @@
 import { BaseController } from "@modules/base.controller";
-import { Request, Response } from "express";
 import { MqttService } from "./mqtt.service";
 import { Mqtt } from "@mqtt";
 
