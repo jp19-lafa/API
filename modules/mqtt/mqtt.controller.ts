@@ -1,6 +1,7 @@
 import { BaseController } from "@modules/base.controller";
 import { Request, Response } from "express";
 import { MqttService } from "./mqtt.service";
+import { Mqtt } from "@mqtt";
 
 export class ActuatorsController extends BaseController {
 
@@ -9,10 +10,13 @@ export class ActuatorsController extends BaseController {
   constructor() {
     super();
     this.mqttService = new MqttService();
+    this.initSubscription();
   }
 
-  // public patchActuator = async (req: Request, res: Response) => {
-    
-  // }
+  private initSubscription() {
+    Mqtt.Instance.sensorUpdate.subscribe(update => {
+      this.mqttService.handleSensorUpdate(update);
+    });
+  }
 
 }

@@ -37,34 +37,21 @@ export class ActuatorsService extends BaseService {
     });
   }
 
-  // TODO Better error handling
-  // TODO Decomposition
+  /**
+   * Update the state of an actuator
+   * @param {IUser} user The user requesting the update
+   * @param {string} actuatorId The id of the actuator to update
+   * @param {number} value The value to update the actuator to
+   * @returns {Promise<IActuator>} The actuator /w updated state
+   */
   public async updateActuatorState(user: IUser, actuatorId: string, value: number): Promise<IActuator> {
+    // TODO Better error handling
     return new Promise<IActuator>(async (resolve, reject) => {
-      let node: INode, actuator: IActuator;
 
-      node = await new Promise<INode>(async (resolve, reject) => {
-        await Database.Models.Node.findOne({ actuators: actuatorId, members: user.id }).exec((err, node) => {
-          if (err || !node) return reject(new Error('ServerError'));
-          resolve(node);
-        });
-      });
+      // TODO Enforce user check
+      let node: INode = await this.getParentNodeByActuatorId(user, actuatorId);
 
-      actuator = await new Promise<IActuator>(async (resolve, reject) => {
-        Database.Models.Actuator.findById(actuatorId).select('-__v').exec((err, actuator) => {
-          if (err || !actuator) return reject(new Error('ServerError'));
-          actuator.value = value;
-          actuator.timestamp = new Date(Date.now());
-          actuator.save().then(actuator => {
-            resolve(actuator);
-          });
-        });
-      });
-
-      new Database.Models.ActuatorDataPoint({
-        value: value,
-        parent: actuatorId
-      }).save();
+      let actuator: IActuator = await this.updateActuatorValueById(actuatorId, value);
 
       let message: Message = {
         topic: `${node.macAddress}/actuator/${actuator.type}`,
@@ -75,6 +62,33 @@ export class ActuatorsService extends BaseService {
 
       Mqtt.Server.publish(message, () => {
         resolve(actuator);
+      });
+    });
+  }
+
+  private async getParentNodeByActuatorId(user: IUser, actuatorId: string): Promise<INode>{
+    return new Promise<INode>((resolve, reject) => {
+      Database.Models.Node.findOne({ actuators: actuatorId, members: user.id }).exec((err, node) => {
+        if (err || !node) return reject(new Error('ServerError'));
+        resolve(node);
+      });
+    });
+  }
+
+  private async updateActuatorValueById(actuatorId: string, value: number): Promise<IActuator> {
+    return new Promise<IActuator>((resolve, reject) => {
+      new Database.Models.ActuatorDataPoint({
+        value: value,
+        parent: actuatorId
+      }).save().then(fulfilled => {
+        Database.Models.Actuator.findById(actuatorId).select('-__v').exec((err, actuator) => {
+          if (err || !actuator) return reject(new Error('ServerError'));
+          actuator.value = value;
+          actuator.timestamp = new Date(Date.now());
+          actuator.save().then(actuator => {
+            resolve(actuator);
+          });
+        });
       });
     });
   }
