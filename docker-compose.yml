@@ -13,7 +13,8 @@ services:
       - 1883:1883
       - 8080:8080
     volumes:
-      - ./keys:keys
+      - ./keys:/app/keys
+      - ./config:/app/config
 
   database:
     image: mongo:latest

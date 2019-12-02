@@ -3,3 +3,4 @@ keys/*
 !keys/readme.md
 .vscode
 dist/
+config/production.json

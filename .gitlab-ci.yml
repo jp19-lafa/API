@@ -5,24 +5,24 @@ services:
     alias: database
 
 stages:
-  - Test
+  # - Test
   - Build
 
-Test:
-  stage: Test
-  image: node:latest
-  before_script:
-    - "npm config set loglevel warn"
-    - "cd keys"
-    - "ssh-keygen -t rsa -b 4096 -m PEM -f private.key -q -N ''"
-    - "openssl rsa -in private.key -pubout -outform PEM -out public.key"
-    - "cd .."
-    - "npm install"
-  script:
-    - npm run test
-  cache:
-    paths:
-      - node_modules/
+# Test:
+#   stage: Test
+#   image: node:latest
+#   before_script:
+#     - "npm config set loglevel warn"
+#     - "cd keys"
+#     - "ssh-keygen -t rsa -b 4096 -m PEM -f private.key -q -N ''"
+#     - "openssl rsa -in private.key -pubout -outform PEM -out public.key"
+#     - "cd .."
+#     - "npm install"
+#   script:
+#     - npm run test
+#   cache:
+#     paths:
+#       - node_modules/
 
 Staging Build:
   stage: Build

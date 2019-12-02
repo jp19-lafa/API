@@ -1,12 +1,12 @@
 {
   "database": {
-    "host": "localhost",
+    "host": "database",
     "port": "27017",
     "name": "farmlab_v2"
   },
   "mqtt": {
     "database": {
-      "host": "localhost",
+      "host": "database",
       "port": "27017",
       "name": "farmlab_mqtt"
     },
@@ -18,7 +18,6 @@
   },
   "port": 8080,
   "jwt": {
-    "signingkey": "Unsafe signing key",
     "issuer": "farmlab.team",
     "audience": "farmlab.team",
     "expiresIn": "24h"
