@@ -18,11 +18,15 @@ export class MqttService extends BaseService {
   }
 
   public async handleSensorUpdate(update: IOUpdate) {
+    console.log('handleSensorUpdate:', update);
     let node: INode = await this.nodesService.getNodeByMAC(update.client.id);
+    console.log('handleSensorUpdate:node:', node);
 
     let sensor: ISensor = (node.sensors as ISensor[]).filter(sensor => sensor.type === update.device.name)[0];
+    console.log('handleSensorUpdate:sensor:', sensor);
 
     await this.sensorsService.updateSensorDataPoint(sensor.id, parseFloat(update.packet.payload.toString()));
+    console.log('handleSensorUpdate:completed:', true);
   }
 
   public sendActuatorUpdateMessage(node: INode, actuator: IActuator, value: number) {

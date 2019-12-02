@@ -14,6 +14,7 @@ export class ActuatorsController extends BaseController {
 
   private initSubscription() {
     Mqtt.Instance.sensorUpdate.subscribe(update => {
+      console.log('initSubscription:', update);
       this.mqttService.handleSensorUpdate(update);
     });
   }
