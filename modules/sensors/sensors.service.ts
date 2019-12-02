@@ -1,6 +1,9 @@
 import { BaseService } from '@modules/base.service';
 import { Database } from '@database';
 import { ISensorDataPoint } from '@models/sensorDataPoint.model';
+import { IUser } from '@models/user.model';
+import { INode } from '@models/node.model';
+import { SensorType, ISensor } from '@models/sensor.model';
 
 
 export class SensorsService extends BaseService {
@@ -29,6 +32,23 @@ export class SensorsService extends BaseService {
           else if (!readings) return reject(new Error('NotFound'));
           else return resolve(readings);
         });
+    });
+  }
+
+  public async updateSensorDataPoint(sensorid: string, value: number): Promise<ISensorDataPoint> {
+    return new Promise<ISensorDataPoint>((resolve, reject) => {
+        new Database.Models.SensorDataPoint({
+          parent: sensorid,
+          value: value
+        }).save().then(dataPoint => {
+          Database.Models.Sensor.findById(sensorid).exec((error, sensor) => {
+            sensor.value = value;
+            sensor.timestamp = new Date(Date.now());
+            sensor.save().then(() => {
+              resolve(dataPoint);
+            });
+          });
+        })
     });
   }
 }

@@ -70,4 +70,32 @@ export class NodesService extends BaseService {
     });
   }
 
+  /**
+   * Get a specific node by mac address
+   * @param {string} macAddress The node's mac address
+   * @returns {Promise<INode>} The specific node
+   */
+  public async getNodeByMAC(macAddress: string): Promise<INode> {
+    return new Promise<INode>((resolve, reject) => {
+      Database.Models.Node.findOne({ macAddress: macAddress })
+        .select("-__v -authorizationKey -macAddress")
+        .populate({
+          path: "members",
+          select: "_id firstname lastname"
+        })
+        .populate({
+          path: "sensors",
+          select: "-__v",
+        })
+        .populate({
+          path: "actuators",
+          select: "-__v",
+        })
+        .exec((err, nodes) => {
+          if (err) return reject(new Error(err.name));
+          else if (!nodes) return reject(new Error('NotFound'));
+          else return resolve(nodes);
+        });
+    });
+  }
 }
