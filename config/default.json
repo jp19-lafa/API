@@ -1,0 +1,28 @@
+{
+  "database": {
+    "host": "database",
+    "port": "27017",
+    "name": "farmlab_v2"
+  },
+  "mqtt": {
+    "database": {
+      "host": "database",
+      "port": "27017",
+      "name": "farmlab_mqtt"
+    },
+    "port": 1883
+  },
+  "debug": {
+    "logging": true,
+    "sentry": false
+  },
+  "cors": [
+    "http://localhost:4200"
+  ],
+  "port": 8080,
+  "jwt": {
+    "issuer": "farmlab.team",
+    "audience": "farmlab.team",
+    "expiresIn": "24h"
+  }
+}
