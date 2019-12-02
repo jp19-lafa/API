@@ -4,12 +4,15 @@ import config from 'config';
 import { Server, Client, Packet } from 'mosca';
 
 import { Subject } from 'rxjs';
+import { MqttService } from '@modules/mqtt/mqtt.service';
 
 export class Mqtt {
 
   private static instance: Mqtt;
 
   private _server: Server;
+
+  protected readonly mqttService: MqttService = new MqttService();
 
   // Observables
   public clientConnected: Subject<Client> = new Subject<Client>();
@@ -47,6 +50,7 @@ export class Mqtt {
       switch (update.device.type) {
         case IOType.sensor:
           console.log('Mqtt:publish:sensor', update);
+          this.mqttService.handleSensorUpdate(update);
           this.sensorUpdate.next(update);
           break;
         case IOType.actuator:
