@@ -16,6 +16,9 @@
     "logging": true,
     "sentry": false
   },
+  "cors": [
+    "http://localhost:4200"
+  ],
   "port": 8080,
   "jwt": {
     "issuer": "farmlab.team",

@@ -1,6 +1,12 @@
 import express from 'express';
 import config from 'config';
 import { init, Handlers } from "@sentry/node";
+import jwt from 'express-jwt';
+import { DatabaseSeed } from './temp/db.seeds';
+import { Mqtt } from './mqtt';
+import { ActuatorsRoute } from '@modules/actuators/actuators.route';
+import { readFileSync } from 'fs';
+import cors from 'cors';
 
 // Routes
 import { AuthRoute } from './modules/auth/auth.route';
@@ -9,11 +15,6 @@ import { SensorsRoute } from './modules/sensors/sensors.route';
 
 // Middleware
 import { AuthMiddleware } from '@modules/auth/auth.middleware';
-import jwt from 'express-jwt';
-import { DatabaseSeed } from './temp/db.seeds';
-import { Mqtt } from './mqtt';
-import { ActuatorsRoute } from '@modules/actuators/actuators.route';
-import { readFileSync } from 'fs';
 
 export class App {
   private readonly app: express.Application;
@@ -40,6 +41,8 @@ export class App {
         '/public'
       ]
     }));
+
+    this.app.use(cors(this.corsOptionDelegate));
 
     this.app.use(this.unauthorizedException);
 
@@ -75,6 +78,20 @@ export class App {
     this.app.use('/nodes', new NodesRoute().getRouter());
     this.app.use('/sensors', new SensorsRoute().getRouter());
     this.app.use('/actuators', new ActuatorsRoute().getRouter());
+  }
+
+  /**
+   * Cors Option Delegate
+   */
+  private corsOptionDelegate(req, callback) {
+    let whitelist: string[] = config.get('cors');
+    let corsOptions;
+    if (whitelist.indexOf(req.header("Origin")) !== -1) {
+      corsOptions = { origin: true };
+    } else {
+      corsOptions = { origin: false };
+    }
+    callback(null, corsOptions);
   }
 
   /**
