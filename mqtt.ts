@@ -49,7 +49,6 @@ export class Mqtt {
 
       switch (update.device.type) {
         case IOType.sensor:
-          console.log('Mqtt:publish:sensor', update);
           this.mqttService.handleSensorUpdate(update);
           this.sensorUpdate.next(update);
           break;
