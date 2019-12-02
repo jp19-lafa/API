@@ -13,7 +13,7 @@ export class SensorsController extends BaseController {
   }
 
   public getSensorDataPoints = async (req: Request, res: Response) => {
-    this.sensorsService.getSensorDataPoints(req.params.id, req.query.limit).then(readings => {
+    this.sensorsService.getSensorDataPoints(req.params.id, parseInt(req.query.limit)).then(readings => {
       res.send({ data: readings });
     }).catch(error => {
       res.send(new NotFound());
