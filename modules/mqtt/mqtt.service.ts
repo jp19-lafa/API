@@ -15,6 +15,9 @@ export class MqttService extends BaseService {
 
   constructor() {
     super();
+    Mqtt.Instance.clientConnected.subscribe(client => {
+      console.log('Client Connected:', client);
+    });
   }
 
   public async handleSensorUpdate(update: IOUpdate) {
@@ -33,7 +36,9 @@ export class MqttService extends BaseService {
         retain: false
       };
   
-      Mqtt.Server.publish(message, () => {
+      Mqtt.Server.publish(message, (obj, packet) => {
+        console.log('Object:', obj);
+        console.log('Packet', packet);
         resolve(actuator);
       });
     });
