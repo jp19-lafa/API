@@ -15,9 +15,6 @@ export class MqttService extends BaseService {
 
   constructor() {
     super();
-    Mqtt.Instance.clientConnected.subscribe(client => {
-      console.log('Client Connected:', client);
-    });
   }
 
   public async handleSensorUpdate(update: IOUpdate) {
