@@ -18,7 +18,7 @@ export class AuthController extends BaseController {
       email: req.body.email,
       password: req.body.password
     }).catch((error: Error) => {
-      res.status(500).send({ error: error });
+      res.status(401).send({ error: error });
     });
 
     // FIXME user ? user : null is not the right way
@@ -30,8 +30,17 @@ export class AuthController extends BaseController {
   }
 
   public refresh = async (req: Request, res: Response) => {
-    
+    let user = await this.authService.authenticateUserByRefreshToken(req.body.refresh).catch((error: Error) => {
+      res.status(401).send({ error: error });
+    });
+
+    // FIXME user ? user : null is not the right way
+    let tokenSet = await this.authService.generateTokenSet(user ? user : null).catch((error: Error) => {
+      res.status(500).send({ error: error });
+    });
+
+    res.status(200).send(tokenSet);
   }
-  public register = async (req: Request, res: Response) => {}
+  public register = async (req: Request, res: Response) => { }
 
 }
