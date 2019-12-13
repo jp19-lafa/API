@@ -41,17 +41,15 @@ export class Mqtt {
     this._server.on('clientDisconnected', (client) => this.clientDisconnected.next(client));
 
     this.clientConnected.subscribe(client => {
-      console.log('Client Connected:', client);
+      console.log('Client Connected:', client.id);
     });
 
     this.clientDisconnected.subscribe(client => {
-      console.log('Client Disconnected:', client);
+      console.log('Client Disconnected:', client.id);
     });
 
     this._server.on('published', (packet, client) => {
       if (!new RegExp('([0-9A-F]{2}[:]){5}([0-9A-F]{2})[/][a-z]+[/][a-z]+').test(packet.topic)) return;
-
-      console.log('PUBLISH POST REGEX PACKET', packet);
       
       const update: IOUpdate = this.injectDevice(client, packet);
 
