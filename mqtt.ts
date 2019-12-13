@@ -49,8 +49,6 @@ export class Mqtt {
     });
 
     this._server.on('published', (packet, client) => {
-      console.log('PUBLISH PRE REGEX CLIENT', client);
-      console.log('PUBLISH PRE REGEX PACKET', packet);
       if (!new RegExp('([0-9A-F]{2}[:]){5}([0-9A-F]{2})[/][a-z]+[/][a-z]+').test(packet.topic)) return;
 
       console.log('PUBLISH POST REGEX PACKET', packet);
