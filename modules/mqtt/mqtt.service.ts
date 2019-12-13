@@ -28,14 +28,12 @@ export class MqttService extends BaseService {
     return new Promise<IActuator>((resolve, reject) => {
       let message: Message = {
         topic: `${node.macAddress}/actuator/${actuator.type}`,
-        payload: value,
+        payload: value.toString(),
         qos: 2,
         retain: false
       };
   
       Mqtt.Server.publish(message, (obj, packet) => {
-        console.log('Object:', obj);
-        console.log('Packet', packet);
         resolve(actuator);
       });
     });
