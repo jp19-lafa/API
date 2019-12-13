@@ -100,7 +100,7 @@ export class App {
   private unauthorizedException(err, req, res, next) {
     if (err.name === "UnauthorizedError") {
       res
-        .status(401)
+        .status(498)
         .send(new Error('InvalidToken'));
     }
   }

@@ -9,12 +9,18 @@ export class DatabaseSeed {
   }
 
   public async seed() {
-    if (await Database.Models.User.exists({ email: 'admin@farmlab.team' })) return;
-    console.log('Creating database seed');
-    const user = await this.seedUser();
-    console.log('Created user:', user);
-    const node = await this.seedNode(user.id);
-    console.log('Created node:', node);
+    if (!await Database.Models.User.exists({ email: 'admin@farmlab.team' })) {
+      console.log('Creating database seed');
+      const user = await this.seedUser();
+      console.log('Created user:', user);
+      const node = await this.seedNode(user.id, 'Dev Node Alfa', 'AA:AA:AA:AA:AA:AA');
+    }
+    if (!await Database.Models.Node.exists({ macAddress: 'B4:D5:BD:9B:5B:4F' })) {
+      Database.Models.User.findOne({ email: 'admin@farmlab.team' }).exec(async (err, user) => {
+        const tomsNode = await this.seedNode(user._id, 'Tom\'s Node', 'B4:D5:BD:9B:5B:4F');
+        console.log('Created node:', tomsNode);
+      })
+    }
   }
 
   seedUser() {
@@ -29,7 +35,7 @@ export class DatabaseSeed {
     });
   }
 
-  async seedNode(userid: string) {
+  async seedNode(userid: string, label: string, mac: string) {
     const sensorsTypes = ['airtemp', 'watertemp', 'lightstr', 'airhumidity', 'waterph'];
     const actuatorTypes = ['lightint', 'flowpump', 'foodpump'];
     return new Promise<INode>(async (resolve, reject) => {
@@ -53,8 +59,8 @@ export class DatabaseSeed {
       let actuatorObjects = await Promise.all(actuatorPromises);
 
       const node = new Database.Models.Node({
-        label: 'Dev Node Alfa',
-        macAddress: 'AA:AA:AA:AA:AA:AA',
+        label:  label,
+        macAddress: mac,
         authorizationKey: uuidv4(),
         members: userid,
         sensors: sensorObjects,

@@ -23,6 +23,6 @@
   "jwt": {
     "issuer": "farmlab.team",
     "audience": "farmlab.team",
-    "expiresIn": "24h"
+    "expiresIn": "15m"
   }
 }

@@ -39,6 +39,15 @@ export class Mqtt {
 
     this._server.on('clientConnected', (client) => this.clientConnected.next(client));
     this._server.on('clientDisconnected', (client) => this.clientDisconnected.next(client));
+
+    this.clientConnected.subscribe(client => {
+      console.log('Client Connected:', client.id);
+    });
+
+    this.clientDisconnected.subscribe(client => {
+      console.log('Client Disconnected:', client.id);
+    });
+
     this._server.on('published', (packet, client) => {
       if (!new RegExp('([0-9A-F]{2}[:]){5}([0-9A-F]{2})[/][a-z]+[/][a-z]+').test(packet.topic)) return;
       
@@ -54,7 +63,6 @@ export class Mqtt {
           break;
       }
     });
-
   }
 
   public static get Server() {

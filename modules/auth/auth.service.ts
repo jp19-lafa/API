@@ -41,11 +41,11 @@ export class AuthService extends BaseService {
     });
   }
 
-  public async authenticateUserByRefreshToken(token: string) {
+  public async authenticateUserByRefreshToken(token: string): Promise<IUser> {
     return new Promise((resolve, reject) => {
       Database.Models.User.findOne({ refreshToken: token })
         .then(user => {
-          if (!user) return reject(new Error('Invalid Token'));
+          if (!user) return reject(new Error('InvalidToken'));
           resolve(user);
         })
         .catch(error => {
@@ -55,8 +55,8 @@ export class AuthService extends BaseService {
   }
 
   public async generateTokenSet(user: IUser): Promise<{ jwt: string, refresh: string }> {
-    return new Promise<{ jwt: string, refresh: string }>((resolve, reject) => {
-      const refreshToken = uuidv4();
+    return new Promise<{ jwt: string, refresh: string }>(async (resolve, reject) => {
+      const refreshToken = await this.updateUserRefreshToken(user);
       Database.Models.User.findByIdAndUpdate(
         user._id,
         { refreshToken: refreshToken },
@@ -75,7 +75,7 @@ export class AuthService extends BaseService {
     });
   }
 
-  private _generateJWT(args: { subject: string, email: string }) {
+  protected _generateJWT(args: { subject: string, email: string }) {
     return sign(
       {
         aud: config.get('jwt.audience'),
@@ -89,6 +89,17 @@ export class AuthService extends BaseService {
         expiresIn: config.get('jwt.expiresIn')
       }
     );
+  }
+
+  protected updateUserRefreshToken(user: IUser): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      if(!user._id) return reject();
+      const token = uuidv4();
+      Database.Models.User.findByIdAndUpdate(user._id, { refreshToken: token }).exec((error, user) => {
+        if(!user || error) return reject();
+        return resolve(token);
+      })
+    });
   }
 
 }
