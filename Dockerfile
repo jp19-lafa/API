@@ -13,8 +13,6 @@ COPY . ./
 
 RUN tsc --build
 
-RUN npm prune --production
-
 # ===== RUNTIME ======
 FROM node:current AS runtime
 
@@ -22,9 +20,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY --from=build "/app/dist/" "/app/"
-COPY --from=build "/app/node_modules/" "/app/node_modules/"
-COPY --from=build "/app/package.json" "/app/package.json"
+COPY --from=build "/app/package*.json" "/app/"
 
-RUN ls /app
+RUN npm install --production
 
 CMD [ "node", "index" ]

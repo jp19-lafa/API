@@ -33,7 +33,9 @@ export class MqttService extends BaseService {
         retain: false
       };
   
-      Mqtt.Server.publish(message, () => {
+      Mqtt.Server.publish(message, (obj, packet) => {
+        console.log('Object:', obj);
+        console.log('Packet', packet);
         resolve(actuator);
       });
     });

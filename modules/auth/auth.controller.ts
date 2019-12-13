@@ -12,7 +12,8 @@ export class AuthController extends BaseController {
     this.authService = new AuthService();
   }
 
-  public login = async (req: Request, res: Response) =>{
+  // FIXME Cannot set headers after they are sent to the client (bad creds)
+  public login = async (req: Request, res: Response) => {
     let user = await this.authService.authenticateByCredentials({
       email: req.body.email,
       password: req.body.password
@@ -31,7 +32,6 @@ export class AuthController extends BaseController {
   public refresh = async (req: Request, res: Response) => {
     
   }
-
   public register = async (req: Request, res: Response) => {}
 
 }
