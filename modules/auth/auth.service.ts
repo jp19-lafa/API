@@ -109,7 +109,7 @@ export class AuthService extends BaseService {
 
   protected updateUserRefreshToken(user: IUser): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      if(!user._id) return reject();
+      if(!user) return reject();
       const token = uuidv4();
       Database.Models.User.findByIdAndUpdate(user._id, { refreshToken: token }).exec((error, user) => {
         if(!user || error) return reject();
