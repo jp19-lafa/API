@@ -21,8 +21,7 @@ export class AuthController extends BaseController {
       res.status(401).send({ error: error });
     });
 
-    // FIXME user ? user : null is not the right way
-    let tokenSet = await this.authService.generateTokenSet(user ? user : null).catch((error: Error) => {
+    let tokenSet = await this.authService.generateTokenSet(user as IUser).catch((error: Error) => {
       res.status(500).send({ error: error });
     });
 
@@ -34,13 +33,23 @@ export class AuthController extends BaseController {
       res.status(401).send({ error: error });
     });
 
-    // FIXME user ? user : null is not the right way
-    let tokenSet = await this.authService.generateTokenSet(user ? user : null).catch((error: Error) => {
+    let tokenSet = await this.authService.generateTokenSet(user as IUser).catch((error: Error) => {
       res.status(500).send({ error: error });
     });
 
     res.status(200).send(tokenSet);
   }
-  public register = async (req: Request, res: Response) => { }
+
+  public register = async (req: Request, res: Response) => {
+    let user = await this.authService.registerUser(req.body.firstname, req.body.lastname, req.body.email, req.body.password).catch(error => {
+      return res.status(500).send({ error: error });
+    });
+
+    let tokenSet = await this.authService.generateTokenSet(user as IUser).catch((error: Error) => {
+      return res.status(500).send({ error: error });
+    });
+    
+    res.status(200).send(tokenSet);
+  }
 
 }
