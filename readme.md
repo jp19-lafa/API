@@ -18,9 +18,14 @@
   <br/>
 </td></tr></table>
 <br/>
-<h2>Development Server</h2>
+<h2>Development Environment</h2>
 
-Run these commands to setup a development server.
+1. Prerequisites:
+    - MongoDB
+
+2. Check the configuration file.
+
+3. Run these commands to setup a development server.
 
 ```
 npm install
