@@ -55,6 +55,5 @@ Production Build:
     - "docker push registry.mira.systems/farmlab/mqtt-api:latest"
   after_script:
     - docker logout registry.mira.systems
-  when: manual
   only:
     - master
