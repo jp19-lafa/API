@@ -2,7 +2,7 @@ import { BaseService } from "@modules/base.service";
 import { Database } from "@database";
 import { IUser } from '@models/user.model';
 
-import bcrypt from 'bcrypt';
+import bcrypt, { hashSync, genSaltSync } from 'bcrypt';
 import uuidv4 from 'uuid/v4';
 import config from 'config';
 import { sign } from 'jsonwebtoken';
@@ -72,6 +72,22 @@ export class AuthService extends BaseService {
           refresh: user.refreshToken
         });
       });
+    });
+  }
+
+  public async registerUser(firstname: string, lastname: string, email: string, password: string): Promise<IUser> {
+    return new Promise<IUser>((resolve, reject) => {
+      if(!firstname || !lastname || !email || !password) return reject('Invalid value received');
+      const user: IUser = new Database.Models.User({
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+        password: hashSync(password, genSaltSync())
+      });
+      user.save((error, user) => {
+        if (error) return reject(error);
+        return resolve(user);
+      })
     });
   }
 
