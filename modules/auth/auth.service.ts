@@ -2,7 +2,7 @@ import { BaseService } from "@modules/base.service";
 import { Database } from "@database";
 import { IUser } from '@models/user.model';
 
-import bcrypt, { hashSync, genSaltSync } from 'bcrypt';
+import { compareSync, hashSync, genSaltSync } from 'bcrypt';
 import uuidv4 from 'uuid/v4';
 import config from 'config';
 import { sign } from 'jsonwebtoken';
@@ -31,7 +31,7 @@ export class AuthService extends BaseService {
     return new Promise<IUser>((resolve, reject) => {
       Database.Models.User.findOne({ email: creds.email })
       .then(user => {
-        if (user && bcrypt.compareSync(creds.password, user.password))
+        if (user && compareSync(creds.password, user.password))
           return resolve(user);
         return reject(new Error('NotFound'));
       })
