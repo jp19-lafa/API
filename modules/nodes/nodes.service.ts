@@ -98,4 +98,42 @@ export class NodesService extends BaseService {
         });
     });
   }
+
+  public async isAllowedToConnect(macAddress: string, authorizationKey: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      // FIXME Enforce some kind of security
+      if (macAddress.includes('core-server')) return resolve(true);
+      Database.Models.Node.findOne({
+        macAddress,
+        authorizationKey,
+      }).select('_id').exec((err, node) => {
+        if (err || !node) return reject('Not allowed to connect!');
+        return resolve(true);
+      });
+    });
+  }
+
+  public async changeStatus(macAddress: string, status: boolean): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      Database.Models.Node.findOneAndUpdate({
+        macAddress
+      }, {
+        status
+      }, {
+        new: true
+      }).exec((err, node) => {
+        if (err || !node) return reject('Invalid Node!');
+        return resolve(node.status);
+      });
+    });
+  }
+
+  public async resetStatus(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      Database.Models.Node.updateMany({ status: true }, { $set: { status: false } }, { multi: true }, (err, success) => {
+        if (err) return reject();
+        return resolve();
+      })
+    });
+  }
 }

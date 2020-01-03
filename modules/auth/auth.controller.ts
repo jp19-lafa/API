@@ -5,11 +5,10 @@ import { IUser } from "@models/user.model";
 
 export class AuthController extends BaseController {
 
-  public readonly authService: AuthService;
+  public readonly authService: AuthService = global.services.authService;
 
   constructor() {
     super();
-    this.authService = new AuthService();
   }
 
   // FIXME Cannot set headers after they are sent to the client (bad creds)

@@ -5,7 +5,6 @@ import { IActuator } from "@models/actuator.model";
 import { Message } from "mosca";
 import { SensorsService } from "@modules/sensors/sensors.service";
 import { NodesService } from "@modules/nodes/nodes.service";
-import { ISensorDataPoint } from "@models/sensorDataPoint.model";
 import { ISensor } from "@models/sensor.model";
 
 export class MqttService extends BaseService {
