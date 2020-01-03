@@ -13,9 +13,9 @@
     "port": 1883
   },
   "debug": {
-    "logging": true,
-    "sentry": false
+    "logging": true
   },
+  "sentry": null,
   "cors": [
     "http://localhost:4200"
   ],

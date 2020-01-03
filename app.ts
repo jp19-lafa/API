@@ -1,5 +1,5 @@
 import express from 'express';
-import config from 'config';
+import { get as config } from 'config';
 import { init, Handlers } from "@sentry/node";
 import jwt from 'express-jwt';
 import { DatabaseSeed } from './temp/db.seeds';
@@ -24,11 +24,13 @@ export class App {
 
   constructor() {
     this.app = express();
-    this.port = config.get('port');
+    this.port = config('port');
 
     this.app.use(express.json());
 
-    this.app.use(Handlers.requestHandler());
+    this.app.use(Handlers.requestHandler({
+      user: ['email']
+    }));
 
     this.app.use(jwt({
       secret: readFileSync("keys/private.key"),
@@ -63,9 +65,9 @@ export class App {
    * Initialize Sentry
    */
   private initSentry() {
-    if (config.has('debug.sentry') && !config.get('debug.sentry')) return;
+    if (!config('sentry')) return;
     init({
-      dsn: 'https://2d76762c67434792892887d13b2cdda6@sentry.io/1784742',
+      dsn: config('sentry'),
       environment: process.env.NODE_ENV
     });
   }
@@ -84,7 +86,7 @@ export class App {
    * Cors Option Delegate
    */
   private corsOptionDelegate(req, callback) {
-    let whitelist: string[] = config.get('cors');
+    let whitelist: string[] = config('cors');
     let corsOptions;
     if (whitelist.indexOf(req.header("Origin")) !== -1) {
       corsOptions = { origin: true };
