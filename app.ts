@@ -12,9 +12,17 @@ import cors from 'cors';
 import { AuthRoute } from './modules/auth/auth.route';
 import { NodesRoute } from './modules/nodes/nodes.route';
 import { SensorsRoute } from './modules/sensors/sensors.route';
+import { MqttRoute } from './modules/mqtt/mqtt.route';
 
 // Middleware
 import { AuthMiddleware } from '@modules/auth/auth.middleware';
+
+// Services
+import { AuthService } from '@modules/auth/auth.service';
+import { NodesService } from '@modules/nodes/nodes.service';
+import { SensorsService } from '@modules/sensors/sensors.service';
+import { ActuatorsService } from '@modules/actuators/actuators.service';
+import { MqttService } from '@modules/mqtt/mqtt.service';
 
 export class App {
   private readonly app: express.Application;
@@ -52,10 +60,11 @@ export class App {
 
     this.initSentry();
 
+    this.initServices();
+
     this.initRoutes();
 
     this.seedDB();
-    
 
     // Force MQTT start (singleton)
     Mqtt.Server;
@@ -80,6 +89,20 @@ export class App {
     this.app.use('/nodes', new NodesRoute().getRouter());
     this.app.use('/sensors', new SensorsRoute().getRouter());
     this.app.use('/actuators', new ActuatorsRoute().getRouter());
+    this.app.use('/mqtt', new MqttRoute().getRouter());
+  }
+
+  /**
+   * Initialize Services
+   */
+  private initServices() {
+    global.services = {
+      authService: new AuthService(),
+      nodesService: new NodesService(),
+      sensorsService: new SensorsService(),
+      actuatorsService: new ActuatorsService(),
+      mqttService: new MqttService()
+    };
   }
 
   /**
