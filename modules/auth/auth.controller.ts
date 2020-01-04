@@ -11,14 +11,13 @@ export class AuthController extends BaseController {
     super();
   }
 
-  // FIXME Cannot set headers after they are sent to the client (bad creds)
   public login = async (req: Request, res: Response) => {
     let user = await this.authService.authenticateByCredentials({
       email: req.body.email,
       password: req.body.password
-    }).catch((error: Error) => {
-      res.status(401).send({ error: error });
-    });
+    }).catch((error: Error) => { });
+
+    if(!user) return res.sendStatus(401);
 
     let tokenSet = await this.authService.generateTokenSet(user as IUser).catch((error: Error) => {
       res.status(500).send({ error: error });
