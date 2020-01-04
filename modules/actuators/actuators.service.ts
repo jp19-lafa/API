@@ -4,11 +4,8 @@ import { IActuatorDataPoint } from '@models/actuatorDataPoint.model';
 import { IUser } from '@models/user.model';
 import { INode } from '@models/node.model';
 import { IActuator } from '@models/actuator.model';
-import { MqttService } from '@modules/mqtt/mqtt.service';
 
 export class ActuatorsService extends BaseService {
-
-  private mqttSerivce: MqttService = new MqttService();
 
   constructor() {
     super();
@@ -54,7 +51,7 @@ export class ActuatorsService extends BaseService {
 
       if(!node || !actuator) return reject(new Error('ServerError'));
 
-      resolve(await this.mqttSerivce.sendActuatorUpdateMessage(node, actuator, value));
+      resolve(await global.services.mqttService.sendActuatorUpdateMessage(node, actuator, value));
 
     });
   }

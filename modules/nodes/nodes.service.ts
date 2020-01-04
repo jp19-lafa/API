@@ -1,8 +1,6 @@
 import { BaseService } from "@modules/base.service";
 import { Database } from "@database";
 import { INode } from "@models/node.model";
-import { ISensor } from "@models/sensor.model";
-import { ISensorDataPoint } from "@models/sensorDataPoint.model";
 import { IUser } from "@models/user.model";
 
 export class NodesService extends BaseService {

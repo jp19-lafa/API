@@ -3,7 +3,6 @@ import { get as config } from 'config';
 import { init, Handlers } from "@sentry/node";
 import jwt from 'express-jwt';
 import { DatabaseSeed } from './temp/db.seeds';
-import { Mqtt } from './mqtt';
 import { ActuatorsRoute } from '@modules/actuators/actuators.route';
 import { readFileSync } from 'fs';
 import cors from 'cors';
@@ -65,9 +64,6 @@ export class App {
     this.initRoutes();
 
     this.seedDB();
-
-    // Force MQTT start (singleton)
-    Mqtt.Server;
   }
 
   /**

@@ -1,41 +1,73 @@
+import { get as config } from 'config';
 import { BaseService } from "@modules/base.service";
-import { IOUpdate, Mqtt } from "@mqtt";
 import { INode } from "@models/node.model";
 import { IActuator } from "@models/actuator.model";
-import { Message } from "mosca";
-import { SensorsService } from "@modules/sensors/sensors.service";
-import { NodesService } from "@modules/nodes/nodes.service";
-import { ISensor } from "@models/sensor.model";
+import { connect, MqttClient, Packet, Client } from 'mqtt';
+import { v4 } from 'uuid';
 
 export class MqttService extends BaseService {
 
-  protected sensorsService: SensorsService = new SensorsService();
-  protected nodesService: NodesService = new NodesService();
+  protected readonly uid: string = v4();
+  protected client: MqttClient;
+  protected mqttConfig: any = config('mqtt');
 
   constructor() {
     super();
+
+    this.client = connect(this.mqttConfig.url, {
+      clientId: this.uid,
+      username: `core-server-${ this.uid }`,
+      password: this.mqttConfig.key
+    });
+
+    this.client.on('connect', () => {
+      console.log(`Connected to MQTT Broker (core-server-${ this.uid })`);
+      // client.subscribe('presence', function (err) {
+      //   if (!err) {
+      //     client.publish('presence', 'Hello mqtt')
+      //   }
+      // })
+    });
+
+    this.client.on('message', this.messageRecieved);
   }
 
-  public async handleSensorUpdate(update: IOUpdate) {
-    let node: INode = await this.nodesService.getNodeByMAC(update.client.id);
-    let sensor: ISensor = (node.sensors as ISensor[]).filter(sensor => sensor.type === update.device.name)[0];
-
-    await this.sensorsService.updateSensorDataPoint(sensor.id, parseFloat(update.packet.payload.toString()));
+  protected messageRecieved = (topic, message) => {
+    // Recieved message
   }
+
+  // public async handleSensorUpdate(update: IOUpdate) {
+  //   let node: INode = await this.nodesService.getNodeByMAC(update.client.id);
+  //   let sensor: ISensor = (node.sensors as ISensor[]).filter(sensor => sensor.type === update.device.name)[0];
+
+  //   await this.sensorsService.updateSensorDataPoint(sensor.id, parseFloat(update.packet.payload.toString()));
+  // }
 
   public sendActuatorUpdateMessage(node: INode, actuator: IActuator, value: number) {
     return new Promise<IActuator>((resolve, reject) => {
-      let message: Message = {
-        topic: `${node.macAddress}/actuator/${actuator.type}`,
-        payload: value.toString(),
+      this.client.publish(`${node.macAddress}/actuator/${actuator.type}`, value.toString(), {
         qos: 2,
         retain: false
-      };
-  
-      Mqtt.Server.publish(message, (obj, packet) => {
+      }, (err) => {
         resolve(actuator);
       });
     });
   }
 
+}
+
+export interface IODevice {
+  type: IOType;
+  name: string;
+}
+
+export enum IOType {
+  sensor = 'sensor',
+  actuator = 'actuator'
+}
+
+export interface IOUpdate {
+  device: IODevice,
+  packet: Packet,
+  client: Client
 }
