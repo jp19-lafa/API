@@ -5,11 +5,10 @@ import { NotFound, Forbidden } from 'http-errors';
 
 export class ActuatorsController extends BaseController {
 
-  public readonly actuatorsService: ActuatorsService;
+  public readonly actuatorsService: ActuatorsService = global.services.actuatorsService;
 
   constructor() {
     super();
-    this.actuatorsService = new ActuatorsService();
   }
 
   public getActuator = async (req: Request, res: Response) => {

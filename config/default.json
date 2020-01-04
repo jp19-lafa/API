@@ -5,12 +5,8 @@
     "name": "farmlab_v2"
   },
   "mqtt": {
-    "database": {
-      "host": "database",
-      "port": "27017",
-      "name": "farmlab_mqtt"
-    },
-    "port": 1883
+    "url": "mqtt://localhost:1884",
+    "key": ""
   },
   "debug": {
     "logging": true

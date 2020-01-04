@@ -5,11 +5,10 @@ import { NotFound, Forbidden } from 'http-errors';
 
 export class SensorsController extends BaseController {
 
-  public readonly sensorsService: SensorsService;
+  public readonly sensorsService: SensorsService = global.services.sensorsService;
 
   constructor() {
     super();
-    this.sensorsService = new SensorsService();
   }
 
   public getSensorDataPoints = async (req: Request, res: Response) => {

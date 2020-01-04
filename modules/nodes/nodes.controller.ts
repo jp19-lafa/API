@@ -5,11 +5,10 @@ import { NotFound, Forbidden } from 'http-errors';
 
 export class NodesController extends BaseController {
 
-  public readonly nodesService: NodesService;
+  public readonly nodesService: NodesService = global.services.nodesService;
 
   constructor() {
     super();
-    this.nodesService = new NodesService();
   }
 
   public getMyNodes = async (req: Request, res: Response) => {

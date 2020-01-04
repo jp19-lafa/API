@@ -1,8 +1,6 @@
 import { BaseService } from "@modules/base.service";
 import { Database } from "@database";
 import { INode } from "@models/node.model";
-import { ISensor } from "@models/sensor.model";
-import { ISensorDataPoint } from "@models/sensorDataPoint.model";
 import { IUser } from "@models/user.model";
 
 export class NodesService extends BaseService {
@@ -96,6 +94,44 @@ export class NodesService extends BaseService {
           else if (!nodes) return reject(new Error('NotFound'));
           else return resolve(nodes);
         });
+    });
+  }
+
+  public async isAllowedToConnect(macAddress: string, authorizationKey: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      // FIXME Enforce some kind of security
+      if (macAddress.includes('core-server')) return resolve(true);
+      Database.Models.Node.findOne({
+        macAddress,
+        authorizationKey,
+      }).select('_id').exec((err, node) => {
+        if (err || !node) return reject('Not allowed to connect!');
+        return resolve(true);
+      });
+    });
+  }
+
+  public async changeStatus(macAddress: string, status: boolean): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      Database.Models.Node.findOneAndUpdate({
+        macAddress
+      }, {
+        status
+      }, {
+        new: true
+      }).exec((err, node) => {
+        if (err || !node) return reject('Invalid Node!');
+        return resolve(node.status);
+      });
+    });
+  }
+
+  public async resetStatus(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      Database.Models.Node.updateMany({ status: true }, { $set: { status: false } }, { multi: true }, (err, success) => {
+        if (err) return reject();
+        return resolve();
+      })
     });
   }
 }
