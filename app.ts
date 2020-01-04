@@ -102,8 +102,12 @@ export class App {
   private unauthorizedException(err, req, res, next) {
     if (err.name === "UnauthorizedError") {
       res
-        .status(498)
-        .send(new Error('InvalidToken'));
+        .status(401)
+        .header('Token-Expired', true)
+        .send({
+          success: false,
+          error: 'Invalid Token'
+        });
     }
   }
 
