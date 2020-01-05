@@ -5,7 +5,7 @@
     "name": "farmlab_v2"
   },
   "mqtt": {
-    "url": "mqtt://localhost:1884",
+    "url": "mqtt://localhost:1883",
     "key": ""
   },
   "debug": {

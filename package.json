@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha test/*_spec.js --exit",
     "start": "nodemon --watch '**/*.ts' --ignore 'node_modules' --exec 'ts-node' index.ts",
-    "setup": "cd keys && sh generate.sh"
+    "setup": "cd keys && sh generate.sh",
+    "docker:deploy": "docker build -t registry.mira.systems/farmlab/mqtt-api:latest . && docker push registry.mira.systems/farmlab/mqtt-api:latest"
   },
   "repository": {
     "type": "git",
