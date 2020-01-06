@@ -146,6 +146,15 @@ export class NodesService extends BaseService {
     });
   }
 
+  public async pairNode(sub: string, macAddress: string, pairingKey: string): Promise<INode> {
+    return new Promise<INode>((resolve, reject) => {
+      Database.Models.Node.findOneAndUpdate({ macAddress, pairingKey }, { $push: { members: sub } }, { new: true }).select('-__v -authorizationKey -pairingKey -macAddress').exec((err, node) => {
+        if (err || !node) return reject();
+        return resolve(node);
+      })
+    });
+  }
+
   protected async buildNode(macAddress: string) {
     const sensorsTypes = ['airtemp', 'watertemp', 'lightstr', 'airhumidity', 'waterph'];
     const actuatorTypes = ['lightint', 'flowpump', 'foodpump'];

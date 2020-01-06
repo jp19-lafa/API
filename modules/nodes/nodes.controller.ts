@@ -41,4 +41,12 @@ export class NodesController extends BaseController {
     });
   }
 
+  public pairNode = async (req: Request, res: Response) => {
+    this.nodesService.pairNode(req.user._id, req.body.macAddress, req.body.pairingKey).then(node => {
+      res.send(node);
+    }).catch(error => {
+      res.status(403).send(new Forbidden());
+    });
+  }
+
 }
