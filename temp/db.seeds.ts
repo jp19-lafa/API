@@ -1,5 +1,5 @@
 import { Database } from '@database';
-import { IUser } from '@models/user.model';
+import { IUser, UserRole } from '@models/user.model';
 import { INode } from '@models/node.model';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -29,7 +29,8 @@ export class DatabaseSeed {
         firstname: 'FarmLab',
         lastname: 'Administrator',
         email: 'admin@farmlab.team',
-        password: '$2b$12$y7L14XYnseL2F6AUL3AE3.c8l5SXwT5zEKSFYj.hwJMD2MWSYYi/i'
+        password: '$2b$12$y7L14XYnseL2F6AUL3AE3.c8l5SXwT5zEKSFYj.hwJMD2MWSYYi/i',
+        role: UserRole.admin
       });
       user.save().then(user => { resolve(user) }).catch(error => { reject(error) });
     });
