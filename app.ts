@@ -9,6 +9,7 @@ import cors from 'cors';
 
 // Routes
 import { AuthRoute } from './modules/auth/auth.route';
+import { UsersRoute } from './modules/users/users.route';
 import { NodesRoute } from './modules/nodes/nodes.route';
 import { SensorsRoute } from './modules/sensors/sensors.route';
 import { MqttRoute } from './modules/mqtt/mqtt.route';
@@ -18,6 +19,7 @@ import { AuthMiddleware } from '@modules/auth/auth.middleware';
 
 // Services
 import { AuthService } from '@modules/auth/auth.service';
+import { UsersService } from '@modules/users/users.service';
 import { NodesService } from '@modules/nodes/nodes.service';
 import { SensorsService } from '@modules/sensors/sensors.service';
 import { ActuatorsService } from '@modules/actuators/actuators.service';
@@ -82,6 +84,7 @@ export class App {
    */
   private initRoutes() {
     this.app.use('/auth', new AuthRoute().getRouter());
+    this.app.use('/users', new UsersRoute().getRouter());
     this.app.use('/nodes', new NodesRoute().getRouter());
     this.app.use('/sensors', new SensorsRoute().getRouter());
     this.app.use('/actuators', new ActuatorsRoute().getRouter());
@@ -94,6 +97,7 @@ export class App {
   private initServices() {
     global.services = {
       authService: new AuthService(),
+      usersService: new UsersService(),
       nodesService: new NodesService(),
       sensorsService: new SensorsService(),
       actuatorsService: new ActuatorsService(),

@@ -1,7 +1,7 @@
 import { BaseService } from "@modules/base.service";
 import { Database } from "@database";
 import { INode } from "@models/node.model";
-import { IUser, UserRole } from "@models/user.model";
+import { IUser } from "@models/user.model";
 import { v4 } from 'uuid';
 
 export class NodesService extends BaseService {
@@ -18,7 +18,7 @@ export class NodesService extends BaseService {
   public async getAllMyNodes(user: IUser): Promise<INode[]> {
     return new Promise<INode[]>((resolve, reject) => {
       Database.Models.Node.find({ members: user.id })
-        .select("-__v -authorizationKey -macAddress")
+        .select("-__v -authorizationKey -pairingKey -macAddress")
         .populate({
           path: "members",
           select: "_id firstname lastname"
@@ -48,7 +48,7 @@ export class NodesService extends BaseService {
   public async getMyNodeById(user: IUser, nodeid: string): Promise<INode> {
     return new Promise<INode>((resolve, reject) => {
       Database.Models.Node.findOne({ members: user.id, _id: nodeid })
-        .select("-__v -authorizationKey -macAddress")
+        .select("-__v -authorizationKey -pairingKey -macAddress")
         .populate({
           path: "members",
           select: "_id firstname lastname"
@@ -77,7 +77,7 @@ export class NodesService extends BaseService {
   public async getNodeByMAC(macAddress: string): Promise<INode> {
     return new Promise<INode>((resolve, reject) => {
       Database.Models.Node.findOne({ macAddress: macAddress })
-        .select("-__v -authorizationKey -macAddress")
+        .select("-__v -authorizationKey -pairingKey -macAddress")
         .populate({
           path: "members",
           select: "_id firstname lastname"
@@ -136,10 +136,9 @@ export class NodesService extends BaseService {
     });
   }
 
-  public async createNode(user: IUser, label: string, macAddress: string): Promise<INode> {
+  public async createNode(macAddress: string): Promise<INode> {
     return new Promise<INode>((resolve, reject) => {
-      if(user.role !== UserRole.admin) return reject();
-      this.buildNode(label, macAddress).then(node => {
+      this.buildNode(macAddress).then(node => {
         resolve(node);
       }).catch(error => {
         reject(error);
@@ -147,10 +146,12 @@ export class NodesService extends BaseService {
     });
   }
 
-  protected async buildNode(label: string, macAddress: string) {
+  protected async buildNode(macAddress: string) {
     const sensorsTypes = ['airtemp', 'watertemp', 'lightstr', 'airhumidity', 'waterph'];
     const actuatorTypes = ['lightint', 'flowpump', 'foodpump'];
     return new Promise<INode>(async (resolve, reject) => {
+      if(!new RegExp('^([0-9A-F]{2}[:]){5}([0-9A-F]{2})$').test(macAddress)) return reject('Invalid MAC');
+
       let sensorPromises = [];
       sensorsTypes.forEach(sensor => {
         let sensorShema = new Database.Models.Sensor({
@@ -171,7 +172,7 @@ export class NodesService extends BaseService {
       let actuatorObjects = await Promise.all(actuatorPromises);
 
       const node = new Database.Models.Node({
-        label: label,
+        label: `node-${v4()}`,
         macAddress: macAddress,
         authorizationKey: v4(),
         pairingKey: v4(),

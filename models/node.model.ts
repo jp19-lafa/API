@@ -24,7 +24,7 @@ export class Node {
   constructor() {
     const schema = new Schema({
       label: String,
-      macAddress: { type: String, required: true },
+      macAddress: { type: String, required: true, unique: true },
       authorizationKey: { type: String, required: true },
       pairingKey: { type: String, required: true },
       status: { type: Boolean, default: false, required: true },

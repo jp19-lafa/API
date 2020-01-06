@@ -6,6 +6,7 @@ declare namespace NodeJS {
       sensorsService: import('../../modules/sensors/sensors.service').SensorsService,
       actuatorsService: import('../../modules/actuators/actuators.service').ActuatorsService,
       mqttService: import('../../modules/mqtt/mqtt.service').MqttService,
+      usersService: import('../../modules/users/users.service').UsersService,
     }
   }
 }
