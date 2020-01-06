@@ -6,6 +6,7 @@ import { DatabaseSeed } from './temp/db.seeds';
 import { ActuatorsRoute } from '@modules/actuators/actuators.route';
 import { readFileSync } from 'fs';
 import cors from 'cors';
+import { version } from './package.json';
 
 // Routes
 import { AuthRoute } from './modules/auth/auth.route';
@@ -75,7 +76,8 @@ export class App {
     if (!config('sentry')) return;
     init({
       dsn: config('sentry'),
-      environment: process.env.NODE_ENV
+      environment: process.env.NODE_ENV,
+      release: version
     });
   }
 
