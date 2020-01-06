@@ -3,4 +3,5 @@ keys/*
 !keys/generate.sh
 .vscode
 dist/
-config/production.json
+config
+!config/default.json

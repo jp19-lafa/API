@@ -1,7 +1,8 @@
 import { BaseService } from "@modules/base.service";
 import { Database } from "@database";
 import { INode } from "@models/node.model";
-import { IUser } from "@models/user.model";
+import { IUser, UserRole } from "@models/user.model";
+import { v4 } from 'uuid';
 
 export class NodesService extends BaseService {
 
@@ -133,5 +134,52 @@ export class NodesService extends BaseService {
         return resolve();
       })
     });
+  }
+
+  public async createNode(user: IUser, label: string, macAddress: string): Promise<INode> {
+    return new Promise<INode>((resolve, reject) => {
+      if(user.role !== UserRole.admin) return reject();
+      this.buildNode(label, macAddress).then(node => {
+        resolve(node);
+      }).catch(error => {
+        reject(error);
+      });
+    });
+  }
+
+  protected async buildNode(label: string, macAddress: string) {
+    const sensorsTypes = ['airtemp', 'watertemp', 'lightstr', 'airhumidity', 'waterph'];
+    const actuatorTypes = ['lightint', 'flowpump', 'foodpump'];
+    return new Promise<INode>(async (resolve, reject) => {
+      let sensorPromises = [];
+      sensorsTypes.forEach(sensor => {
+        let sensorShema = new Database.Models.Sensor({
+          type: sensor
+        });
+        sensorPromises.push(sensorShema.save());
+      });
+
+      let actuatorPromises = [];
+      actuatorTypes.forEach(actuator => {
+        let actuatorShema = new Database.Models.Actuator({
+          type: actuator
+        });
+        actuatorPromises.push(actuatorShema.save());
+      });
+
+      let sensorObjects = await Promise.all(sensorPromises);
+      let actuatorObjects = await Promise.all(actuatorPromises);
+
+      const node = new Database.Models.Node({
+        label: label,
+        macAddress: macAddress,
+        authorizationKey: v4(),
+        pairingKey: v4(),
+        sensors: sensorObjects,
+        actuators: actuatorObjects,
+      });
+      node.save().then(user => { resolve(node) }).catch(error => { reject(error) });
+
+    })
   }
 }
