@@ -2,6 +2,7 @@ import { BaseController } from "@modules/base.controller";
 import { Request, Response } from "express";
 import { NodesService } from "./nodes.service";
 import { NotFound, Forbidden } from 'http-errors';
+import { UserRole } from '@models/user.model';
 
 export class NodesController extends BaseController {
 
@@ -32,10 +33,11 @@ export class NodesController extends BaseController {
   }
 
   public createNode = async (req: Request, res: Response) => {
-    this.nodesService.createNode(req.user, req.body.label, req.body.macAddress).then(node => {
+    if(req.user.role !== UserRole.admin) return res.status(403).send(new Forbidden());
+    this.nodesService.createNode(req.body.macAddress).then(node => {
       res.send(node);
     }).catch(error => {
-      res.send(new Forbidden());
+      res.status(403).send(new Forbidden());
     });
   }
 
