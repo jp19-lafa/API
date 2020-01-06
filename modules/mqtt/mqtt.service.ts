@@ -30,9 +30,10 @@ export class MqttService extends BaseService {
       this.client.publish(`farmlab/${node.macAddress}/actuator/${actuator.type}`, value.toString(), {
         qos: 2,
         retain: false
-      }, (err) => {
-        resolve(actuator);
+      }, (err, packet) => {
+        // FIXME This fails
       });
+      resolve(actuator);
     });
   }
 

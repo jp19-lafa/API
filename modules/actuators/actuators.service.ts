@@ -51,7 +51,9 @@ export class ActuatorsService extends BaseService {
 
       if(!node || !actuator) return reject(new Error('ServerError'));
 
-      resolve(await global.services.mqttService.sendActuatorUpdateMessage(node, actuator, value));
+      const updatedActuator = await global.services.mqttService.sendActuatorUpdateMessage(node, actuator, value);
+
+      resolve(updatedActuator);
 
     });
   }
