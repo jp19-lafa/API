@@ -13,23 +13,6 @@ export declare interface INode extends Document {
   members: Types.ObjectId[] | IUser[],
   sensors: Types.ObjectId[] | ISensor[],
   actuators: Types.ObjectId[] | IActuator[]
-  // actuators: {
-  //   lightint: {
-  //     value: number,
-  //     timestamp: Date,
-  //     history: Types.ObjectId[] | IDataPoint[]
-  //   },
-  //   flowpump: {
-  //     value: number,
-  //     timestamp: Date,
-  //     history: Types.ObjectId[] | IDataPoint[]
-  //   },
-  //   foodpump: {
-  //     value: number,
-  //     timestamp: Date,
-  //     history: Types.ObjectId[] | IDataPoint[]
-  //   }
-  // }
 }
 
 export interface NodeModel extends Model<INode> { };
@@ -43,6 +26,7 @@ export class Node {
       label: String,
       macAddress: { type: String, required: true },
       authorizationKey: { type: String, required: true },
+      pairingKey: { type: String, required: true },
       status: { type: Boolean, default: false, required: true },
       liveSince: { type: Date, default: Date.now },
       allowPublicStats: { type: Boolean, default: false },

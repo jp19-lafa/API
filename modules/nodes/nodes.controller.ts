@@ -31,8 +31,12 @@ export class NodesController extends BaseController {
     });
   }
 
-  public patchMyNodeActuator = async (req: Request, res: Response) => {
-    res.send(new Forbidden());
+  public createNode = async (req: Request, res: Response) => {
+    this.nodesService.createNode(req.user, req.body.label, req.body.macAddress).then(node => {
+      res.send(node);
+    }).catch(error => {
+      res.send(new Forbidden());
+    });
   }
 
 }

@@ -8,6 +8,10 @@
     "url": "mqtt://localhost:1883",
     "key": ""
   },
+  "admin": {
+    "email": "admin@farmlab.team",
+    "password": "password"
+  },
   "debug": {
     "logging": true
   },
