@@ -15,5 +15,6 @@ export class NodesRoute extends BaseRoute {
     this.router.get('/public', [], this.controller.getPublicNodes);
     this.router.get('/:id', [], this.controller.getMyNode);
     this.router.post('/', [], this.controller.createNode);
+    this.router.post('/pair', [], this.controller.pairNode);
   }
 }
