@@ -155,6 +155,16 @@ export class NodesService extends BaseService {
     });
   }
 
+  public async addMember(nodeId: string, user: string): Promise<INode> {
+    // NOTE This doesn't check if the user exists
+    return new Promise<INode>((resolve, reject) => {
+      Database.Models.Node.findByIdAndUpdate(nodeId, { $push: { members: user } }, { new: true }).select('-__v -authorizationKey -pairingKey -macAddress').exec((err, node) => {
+        if (err || !node) return reject();
+        return resolve(node);
+      })
+    });
+  }
+
   protected async buildNode(macAddress: string) {
     const sensorsTypes = ['airtemp', 'watertemp', 'lightstr', 'airhumidity', 'waterph'];
     const actuatorTypes = ['lightint', 'flowpump', 'foodpump'];
