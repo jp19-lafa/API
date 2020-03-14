@@ -33,7 +33,6 @@ export class NodesController extends BaseController {
   }
 
   public createNode = async (req: Request, res: Response) => {
-    if(req.user.role !== UserRole.admin) return res.status(403).send(new Forbidden());
     this.nodesService.createNode(req.body.macAddress).then(node => {
       res.send(node);
     }).catch(error => {
@@ -43,6 +42,14 @@ export class NodesController extends BaseController {
 
   public pairNode = async (req: Request, res: Response) => {
     this.nodesService.pairNode(req.user._id, req.body.macAddress, req.body.pairingKey).then(node => {
+      res.send(node);
+    }).catch(error => {
+      res.status(403).send(new Forbidden());
+    });
+  }
+
+  public addMember = async (req: Request, res: Response) => {
+    this.nodesService.addMember(req.params.id, req.body.user).then(node => {
       res.send(node);
     }).catch(error => {
       res.status(403).send(new Forbidden());

@@ -67,7 +67,8 @@ export class AuthService extends BaseService {
         resolve({
           jwt: this._generateJWT({
             subject: user._id,
-            email: user.email
+            email: user.email,
+            role: user.role,
           }),
           refresh: user.refreshToken
         });
@@ -91,14 +92,15 @@ export class AuthService extends BaseService {
     });
   }
 
-  protected _generateJWT(args: { subject: string, email: string }) {
+  protected _generateJWT(args: { subject: string, email: string, role: string }) {
     return sign(
       {
         aud: config.get('jwt.audience'),
         iss: config.get('jwt.issuer'),
         jti: uuidv4(),
         sub: args.subject,
-        email: args.email
+        email: args.email,
+        role: args.role,
       },
       this.privateKey,
       {

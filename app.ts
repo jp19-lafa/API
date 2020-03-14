@@ -16,7 +16,7 @@ import { SensorsRoute } from './modules/sensors/sensors.route';
 import { MqttRoute } from './modules/mqtt/mqtt.route';
 
 // Middleware
-import { AuthMiddleware } from '@modules/auth/auth.middleware';
+import { injectUser } from '@modules/auth/auth.middleware';
 
 // Services
 import { AuthService } from '@modules/auth/auth.service';
@@ -29,8 +29,6 @@ import { MqttService } from '@modules/mqtt/mqtt.service';
 export class App {
   private readonly app: express.Application;
   private readonly port: number;
-
-  private readonly authMiddleware: AuthMiddleware = new AuthMiddleware();
 
   constructor() {
     this.app = express();
@@ -58,7 +56,7 @@ export class App {
 
     this.app.use(this.unauthorizedException);
 
-    this.app.use(this.authMiddleware.injectUser);
+    this.app.use(injectUser);
 
     this.initSentry();
 
