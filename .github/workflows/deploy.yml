@@ -1,0 +1,26 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  CAPROVER_NAME: ${{ github.sha }}
+  CAPROVER_URL: ${{ secrets.CAPROVER_URL }}
+  CAPROVER_PASSWORD: ${{ secrets.CAPROVER_PASSWORD }}
+  CAPROVER_BRANCH: master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - name: Install Caprover
+      run: npm install -g caprover
+    - name: Deploy
+      run: caprover deploy -a ${{ secrets.CAPROVER_APP }}
+    - name: Logout
+      run: caprover logout
