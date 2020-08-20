@@ -21,7 +21,7 @@
   "homepage": "https://github.com/jp19-lafa/API#readme",
   "dependencies": {
     "@sentry/node": "^5.13.1",
-    "bcrypt": "^3.0.8",
+    "bcrypt": "^5.0.0",
     "config": "^3.3.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
